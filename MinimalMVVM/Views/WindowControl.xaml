@@ -1,26 +1,54 @@
-﻿<UserControl x:Class="MinimalMVVM.Views.ConverterControl"
+﻿<UserControl x:Class="MinimalMVVM.Views.WindowControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}" Height="426" Width="319.333">
+             d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}" Height="475" Width="319.333">
+
+
 
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
+
     </UserControl.InputBindings>
 
-    <StackPanel Margin="0,22,0,-39">
-        <Label Foreground="Blue" Margin="5,5,5,0">ID пользователя</Label>
-        <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5" Height="17"/>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="ReverseBooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+
+    <StackPanel Margin="0,22,0.333,-78">
+
+
+        <RadioButton  Name="id_radio" IsEnabled="{Binding ElementName=http_radio}" IsChecked="True">ID</RadioButton>
+        <RadioButton IsChecked="{Binding IsHttp}" Name="http_radio">HTTP</RadioButton>
+
+        <GroupBox Visibility="{Binding ElementName=id_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
+            <StackPanel>
+                <Label Foreground="Blue" Margin="5,5,5,0">ID пользователя</Label>
+                <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Visibility="{Binding ElementName=http_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
+            <StackPanel>
+                <Label Foreground="Blue" Margin="5,5,5,0">HTTP</Label>
+                <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>
+            </StackPanel>
+        </GroupBox>
+
+
         <Label Foreground="Blue" Margin="5,5,5,0" Height="27">History</Label>
+
         <ListBox  SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History}" Height="200" Margin="5"/>
-        <Button Command="{Binding ConvertTextCommand}" Margin="5" Content="Добавить строку в файл"/>
-        <Button Command="{Binding AddTextFromFileCommand}" Content="Select File" Margin="5"></Button>
-        <Button Command="{Binding DeleteLineFromTextCommand}" Content="Удалить строку из файла" Margin="5"></Button>
+        <Button  Command="{Binding ConvertTextCommand}" Margin="5" Content="Добавить строку в файл"/>
+        <Button Command="{Binding DeleteLineFromTextCommand}" Content="Удалить строку из файла" Margin="5,5,5.333,5"/>
+        <Button Command="{Binding AddTextFromFileCommand}" Content="Выбрать файл" Margin="5"></Button>
 
 
     </StackPanel>
+
 
 </UserControl>

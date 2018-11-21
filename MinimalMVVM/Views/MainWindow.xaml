@@ -1,4 +1,4 @@
-<Window x:Class="MinimalMVVM.Views.ConvertWindow"
+<Window x:Class="MinimalMVVM.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Views="clr-namespace:MinimalMVVM.Views"
@@ -12,6 +12,6 @@
         <ViewModels:WindowViewModel/>
     </Window.DataContext>
 
-    <Views:ConverterControl Margin="0,23,5,-16.667"/>
+    <Views:WindowControl Margin="0,23,5,-16.667"/>
 
 </Window>

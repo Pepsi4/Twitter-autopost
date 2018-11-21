@@ -1,8 +1,8 @@
 namespace MinimalMVVM.Views
 {
-    public partial class ConvertWindow
+    public partial class MainWindow
     {
-        public ConvertWindow()
+        public MainWindow()
         {
             InitializeComponent();
         }

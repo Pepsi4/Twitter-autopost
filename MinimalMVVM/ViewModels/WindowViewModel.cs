@@ -4,6 +4,7 @@ using System.Windows.Input;
 using MinimalMVVM.Models;
 using System.IO;
 using System.Linq;
+using TweetSharp;
 
 namespace MinimalMVVM.ViewModels
 {
@@ -13,6 +14,7 @@ namespace MinimalMVVM.ViewModels
         private readonly FileModel file = new FileModel();
         private ObservableCollection<string> _history = new ObservableCollection<string>();
         private readonly FileModel fileModel = new FileModel();
+        private readonly TwitterUserModel twitterUserModel = new TwitterUserModel();
 
         private string _someText;
         public string SomeText
@@ -52,6 +54,47 @@ namespace MinimalMVVM.ViewModels
         {
             get { return _history; }
         }
+
+        private string _userName;
+        public string UserName
+        {
+            get { return _userName; }
+            set
+            {
+                _userName = value;
+                RaisePropertyChangedEvent("UserName");
+            }
+
+        }
+
+        private long _userId;
+        public long UserId
+        {
+            get { return _userId; }
+            set
+            {
+                _userId = value;
+                RaisePropertyChangedEvent("UserId");
+            }
+        }
+
+        private bool _isHttp;
+        public bool IsHttp
+        {
+            get { return _isHttp; }
+            set
+            {
+                _isHttp = value;
+                RaisePropertyChangedEvent("IsHttp");
+            }
+        }
+        
+        private static string ConsumerKey = "";
+        private static string ConsumerSecret = "";
+        private static string _accessToken = "";
+        private static string _accessTokenSecret = "";
+
+        private static TwitterService service = new TwitterService(ConsumerKey, ConsumerSecret, _accessToken, _accessTokenSecret);
         #endregion
 
         #region commands
@@ -74,12 +117,19 @@ namespace MinimalMVVM.ViewModels
         #endregion
 
         #region command-method
+
+
         private void ConvertText()
         {
-            if (string.IsNullOrWhiteSpace(SomeText)) return;
-            AddToHistory(_someText.ToUpper());
-            SomeText = string.Empty;
-            SaveChangesInFile();
+
+            if (IsHttp == true)
+            {
+                AddHttpText();
+            }
+            else
+            {
+                AddIdText();
+            }
         }
 
         private void DeleteLineFromText()
@@ -90,7 +140,7 @@ namespace MinimalMVVM.ViewModels
                 linesList.RemoveAt((int)_selectedLineIndex);
                 File.WriteAllLines(file.FilePath, _history);
             }
-            catch (System.ArgumentNullException) {  }
+            catch (System.ArgumentNullException) { }
             catch (System.ArgumentOutOfRangeException) { }
 
             DeleteLineHistory();
@@ -108,6 +158,40 @@ namespace MinimalMVVM.ViewModels
         #endregion
 
         #region helpers
+        private void AddIdText()
+        {
+            AddToHistory(SomeText);
+            SomeText = string.Empty;
+            SaveChangesInFile();
+        }
+
+        private void AddHttpText()
+        {
+            if (string.IsNullOrWhiteSpace(SomeText)) return;    // Checks if we have something in the field.
+            SetUserName();                                      // Converts http to user`s name.
+            ConvertHttpToId();                                  // Converts user's name to his id.
+            AddToHistory(twitterUserModel.UserId.ToString());   // Adds to history.
+            SomeText = string.Empty;                            // Deletes text in the input field
+            SaveChangesInFile();                                // Saves history to the file.
+        }
+
+        private void SetUserName()
+        {
+            twitterUserModel.UserName = _someText.Substring(_someText.IndexOf("/", 15) + 1);  //converting http to user's name.
+        }
+
+        private void ConvertHttpToId()
+        {
+            System.Windows.MessageBox.Show(twitterUserModel.UserName);
+
+            var user = service.GetUserProfileFor(new GetUserProfileForOptions
+            {
+                ScreenName = twitterUserModel.UserName
+            });
+
+            twitterUserModel.UserId = user.Id;
+        }
+
         private void GetTextFromFile()
         {
             if (file.FilePath != null)
@@ -142,7 +226,6 @@ namespace MinimalMVVM.ViewModels
 
             if (result == true)
             {
-                //FilePath = dlg.FileName;
                 file.FilePath = dlg.FileName;
             }
         }
@@ -165,6 +248,6 @@ namespace MinimalMVVM.ViewModels
                 _history.RemoveAt((int)_selectedLineIndex);
             }
         }
-        #endregion 
+        #endregion
     }
 }
