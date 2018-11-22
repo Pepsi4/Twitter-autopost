@@ -1,19 +1,19 @@
-﻿namespace MinimalMVVM.Models
-{
-    public class TwitterUserModel : ObservableObject
+﻿    namespace MinimalMVVM.Models
     {
-        private string _userName;
-        public string UserName
+        public class TwitterUserModel : ObservableObject
         {
-            get { return _userName; }
-            set { _userName = value; }
-        }
+            private string _userName;
+            public string UserName
+            {
+                get { return _userName; }
+                set { _userName = value; }
+            }
 
-        private long _userId;
-        public long UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
+            private long _userId;
+            public long UserId
+            {
+                get { return _userId; }
+                set { _userId = value; }
+            }
         }
     }
-}

@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+﻿    using System.ComponentModel;
 
-namespace MinimalMVVM
-{
-    public abstract class ObservableObject : INotifyPropertyChanged
+    namespace MinimalMVVM
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChangedEvent(string propertyName)
+        public abstract class ObservableObject : INotifyPropertyChanged
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            protected void RaisePropertyChangedEvent(string propertyName)
+            {
+                var handler = PropertyChanged;
+                if (handler != null)
+                    handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
-}

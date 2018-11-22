@@ -5,23 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}" Height="475" Width="319.333">
-
-
+             d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}" Height="547" Width="694.334">
 
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
-
     </UserControl.InputBindings>
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="ReverseBooleanToVisibilityConverter" />
     </UserControl.Resources>
 
-
-    <StackPanel Margin="0,22,0.333,-78">
-
-
+    <StackPanel Margin="10,-13,18,92">
         <RadioButton  Name="id_radio" IsEnabled="{Binding ElementName=http_radio}" IsChecked="True">ID</RadioButton>
         <RadioButton IsChecked="{Binding IsHttp}" Name="http_radio">HTTP</RadioButton>
 
@@ -39,16 +33,31 @@
             </StackPanel>
         </GroupBox>
 
+        <StackPanel Orientation="Horizontal">
+            <RadioButton MinHeight=></RadioButton>
+            <RadioButton></RadioButton>
+        </StackPanel>
 
         <Label Foreground="Blue" Margin="5,5,5,0" Height="27">History</Label>
-
         <ListBox  SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History}" Height="200" Margin="5"/>
-        <Button  Command="{Binding ConvertTextCommand}" Margin="5" Content="Добавить строку в файл"/>
-        <Button Command="{Binding DeleteLineFromTextCommand}" Content="Удалить строку из файла" Margin="5,5,5.333,5"/>
-        <Button Command="{Binding AddTextFromFileCommand}" Content="Выбрать файл" Margin="5"></Button>
+
+        <StackPanel Orientation="Horizontal">
+            <Label MinWidth="140">Лист пользователей</Label>
+            <Label MinWidth="200">C://...</Label>
+            <Button HorizontalAlignment="Right" Width="100" Content="Создать"/>
+            <Button HorizontalAlignment="Right" Width="100" Content="Открыть"/>
+        </StackPanel>
 
 
+        <StackPanel Orientation="Horizontal">
+            <Label MinWidth="140">Белый лист</Label>
+            <Label MinWidth="200">C://...</Label>
+            <Button HorizontalAlignment="Right" Width="100" >Создать</Button>
+            <Button HorizontalAlignment="Right" Width="100" Content="Открыть"/>
+        </StackPanel>
+
+        <Button  Command="{Binding ConvertTextCommand}"  Content="Добавить строку в файл"/>
+        <Button Command="{Binding DeleteLineFromTextCommand}" Content="Удалить строку из файла"/>
+        <Button Command="{Binding AddTextFromFileCommand}" Content="Выбрать файл" ></Button>
     </StackPanel>
-
-
 </UserControl>

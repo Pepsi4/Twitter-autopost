@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace MinimalMVVM.ViewModels
-{
-    public class DelegateCommand : ICommand
+    namespace MinimalMVVM.ViewModels
     {
-        private readonly Action _action;
-
-        public DelegateCommand(Action action)
+        public class DelegateCommand : ICommand
         {
-            _action = action;
-        }
+            private readonly Action _action;
 
-        public void Execute(object parameter)
-        {
-            _action();
-        }
+            public DelegateCommand(Action action)
+            {
+                _action = action;
+            }
 
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
+            public void Execute(object parameter)
+            {
+                _action();
+            }
 
-#pragma warning disable 67
-        public event EventHandler CanExecuteChanged { add { } remove { } }
-#pragma warning restore 67
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+
+            public event EventHandler CanExecuteChanged { add { } remove { } }
+
+        }
     }
-}

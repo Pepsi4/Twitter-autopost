@@ -6,7 +6,7 @@
         Title="Converter"
         MinWidth="300"
         ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight" Height="471.035" Width="301.157">
+        SizeToContent="WidthAndHeight" Height="570.333" Width="700.333">
 
     <Window.DataContext>
         <ViewModels:WindowViewModel/>
