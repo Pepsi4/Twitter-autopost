@@ -4,6 +4,8 @@ namespace MinimalMVVM.Views
     {
         public MainWindow()
         {
+            WindowViewModel windowViewModel = new WindowViewModel();
+            this.DataContext = windowViewModel;
             InitializeComponent();
         }
     }

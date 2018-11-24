@@ -6,11 +6,11 @@
         Title="Converter"
         MinWidth="300"
         ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight" Height="570.333" Width="700.333">
+        SizeToContent="WidthAndHeight" Height="444.999" Width="659">
 
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <ViewModels:WindowViewModel/>
-    </Window.DataContext>
+    </Window.DataContext>-->
 
     <Views:WindowControl Margin="0,23,5,-16.667"/>
 

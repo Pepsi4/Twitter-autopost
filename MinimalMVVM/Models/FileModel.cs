@@ -7,7 +7,7 @@
             {
                 get { return _filePath; }
                 set { _filePath = value;
-                    RaisePropertyChangedEvent("FilePath");
+                RaisePropertyChangedEvent(nameof(FilePath));
                 }
             }
         }
