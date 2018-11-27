@@ -9,6 +9,8 @@
 
     <!--xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"-->
     <!--d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}"-->
+    
+    
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
     </UserControl.InputBindings>
@@ -16,6 +18,16 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="ReverseBooleanToVisibilityConverter" />
     </UserControl.Resources>
+
+    <UserControl.Style>
+        <Style TargetType="UserControl">
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=AddStringButton}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
 
     <StackPanel Margin="10,-13,9.667,-14.333">
 
@@ -44,19 +56,20 @@
 
 
 
-        <ListBox  SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5"/>
+        <ListBox SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5"/>
 
         <StackPanel Orientation="Horizontal">
             <RadioButton MinWidth="70" Name="id_radio" IsEnabled="{Binding ElementName=http_radio}" IsChecked="True">ID</RadioButton>
             <RadioButton MinWidth="100" IsChecked="{Binding IsHttp}" Name="http_radio">HTTP</RadioButton>
         </StackPanel>
 
-        <GroupBox Visibility="{Binding ElementName=id_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}" Height="77">
+        <GroupBox Visibility="{Binding ElementName=id_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel>
                 <Label Foreground="Blue" Margin="5,5,5,0">ID пользователя</Label>
-                <TextBox Text="{Binding SomeText}" Margin="5,5,5.333,5" Height="24"/>
             </StackPanel>
         </GroupBox>
+
+        
 
         <GroupBox Visibility="{Binding ElementName=http_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel>
@@ -64,6 +77,8 @@
                 <!--<TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>-->
             </StackPanel>
         </GroupBox>
+
+        <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>
 
         <StackPanel Orientation="Horizontal">
             <Button MinWidth="200" Command="{Binding ConvertTextCommand}"  Content="Добавить строку в файл"/>
