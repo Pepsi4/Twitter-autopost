@@ -45,7 +45,6 @@ namespace MinimalMVVM
                     _isAllusersListSelected = value;
                     ChangeList();
                 }
-
             }
         }
 
@@ -142,24 +141,36 @@ namespace MinimalMVVM
 
         #region commands
 
-        //public ICommand ChangeListCommand
-        //{
-        //    get { return new DelegateCommand(ChangeList); }
-        //}
+        public ICommand ChangeListCommand
+        {
+            get { return new DelegateCommand(ChangeList, true); }
+        }
+
+        ICommand _attachmentChecked;
 
         public ICommand ConvertTextCommand
         {
-            get { return new DelegateCommand(ConvertText); }
+            get
+            {
+                return _attachmentChecked ?? (_attachmentChecked = new DelegateCommand(param => ConvertText(param), CanExecuteAttachmentChecked()));
+            }
+            //get { return new DelegateCommand(ConvertText); }
+        }
+
+
+        private bool CanExecuteAttachmentChecked()
+        {
+            return true;
         }
 
         public ICommand AddTextFromFileCommand
         {
-            get { return new DelegateCommand(AddTextFromFile); }
+            get { return new DelegateCommand(AddTextFromFile, true); }
         }
 
         public ICommand DeleteLineFromTextCommand
         {
-            get { return new DelegateCommand(DeleteLineFromText); }
+            get { return new DelegateCommand(DeleteLineFromText, true); }
         }
 
         #endregion
@@ -168,7 +179,7 @@ namespace MinimalMVVM
 
         private void ChangeList()
         {
-            if (_isAllusersListSelected)
+            if (_isAllusersListSelected )
             {
                 for (int i = 0; i < _history.Count; i++)
                 {
@@ -204,7 +215,7 @@ namespace MinimalMVVM
 
 
 
-        private void ConvertText()
+        private void ConvertText(object parameter)
         {
             if (IsHttp == true)
             {

@@ -1,14 +1,18 @@
-﻿    namespace MinimalMVVM.Models
+﻿namespace MinimalMVVM.Models
+{
+    public class FileModel : ObservableObject
     {
-        public class FileModel : ObservableObject
+        string _filePath;
+        public string FilePath
         {
-            string _filePath;
-            public string FilePath
+            get { return _filePath; }
+            set
             {
-                get { return _filePath; }
-                set { _filePath = value;
+                _filePath = value;
                 RaisePropertyChangedEvent(nameof(FilePath));
-                }
             }
         }
+
+
     }
+}

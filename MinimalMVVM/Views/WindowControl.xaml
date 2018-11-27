@@ -9,8 +9,8 @@
 
     <!--xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"-->
     <!--d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}"-->
-    
-    
+
+
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
     </UserControl.InputBindings>
@@ -50,8 +50,9 @@
 
         <Label Foreground="Blue" Margin="5,40,5,0" Height="27">Текст файла</Label>
         <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-            <RadioButton Command="{Binding ChangeListCommand}" IsChecked="{Binding IsAllUsersListSelected}"  MinWidth="300">Лист пользователей</RadioButton>
-            <RadioButton Command="{Binding ChangeListCommand}" MinWidth="300">Белый лист</RadioButton>
+            <RadioButton  IsChecked="{Binding IsAllUsersListSelected, UpdateSourceTrigger=PropertyChanged}"  MinWidth="300">Лист пользователей</RadioButton>
+            <RadioButton  MinWidth="300">Белый лист</RadioButton>
+            <!--Command="{Binding ChangeListCommand}"-->
         </StackPanel>
 
 
@@ -69,7 +70,7 @@
             </StackPanel>
         </GroupBox>
 
-        
+
 
         <GroupBox Visibility="{Binding ElementName=http_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel>
@@ -81,7 +82,7 @@
         <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>
 
         <StackPanel Orientation="Horizontal">
-            <Button MinWidth="200" Command="{Binding ConvertTextCommand}"  Content="Добавить строку в файл"/>
+            <Button MinWidth="200" Command="{Binding ConvertTextCommand}" CommandParameter="1"  Content="Добавить строку в файл"/>
             <Button MinWidth="200" Command="{Binding DeleteLineFromTextCommand}" Content="Удалить выбранную строку из файла"/>
         </StackPanel>
 
