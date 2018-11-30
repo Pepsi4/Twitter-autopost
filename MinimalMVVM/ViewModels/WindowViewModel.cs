@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using TweetSharp;
 using MinimalMVVM.ViewModels;
+using System.Diagnostics;
 
 namespace MinimalMVVM
 {
@@ -33,6 +34,26 @@ namespace MinimalMVVM
 
         private ObservableCollection<string> _allUsersList = new ObservableCollection<string>();
         private ObservableCollection<string> _whiteListHistory = new ObservableCollection<string>();
+
+        public string AllUsersFilePath
+        {
+            get { return fileModel.AllUsersFilePath; }
+            set
+            {
+                fileModel.AllUsersFilePath = value;
+                RaisePropertyChangedEvent(nameof(AllUsersFilePath));
+            }
+        }
+
+        public string WhiteUsersFilePath
+        {
+            get { return fileModel.WhiteUsersFilePath; }
+            set
+            {
+                fileModel.WhiteUsersFilePath = value;
+                RaisePropertyChangedEvent(nameof(WhiteUsersFilePath));
+            }
+        }
 
         private bool _isAllusersListSelected = true;
         public bool IsAllUsersListSelected
@@ -91,7 +112,6 @@ namespace MinimalMVVM
 
             set
             {
-                System.Windows.MessageBox.Show("changed");
                 _history = (ObservableCollection<string>)value;
                 RaisePropertyChangedEvent(nameof(History));
             }
@@ -106,7 +126,6 @@ namespace MinimalMVVM
                 _userName = value;
                 RaisePropertyChangedEvent(nameof(UserName));
             }
-
         }
 
         private long _userId;
@@ -146,40 +165,141 @@ namespace MinimalMVVM
             get { return new DelegateCommand(ChangeList, true); }
         }
 
-        ICommand _attachmentChecked;
-
+        //ICommand _convertTextCommand;
         public ICommand ConvertTextCommand
         {
-            get
-            {
-                return _attachmentChecked ?? (_attachmentChecked = new DelegateCommand(param => ConvertText(param), CanExecuteAttachmentChecked()));
-            }
-            //get { return new DelegateCommand(ConvertText); }
+            //get
+            //{
+            //    return _convertTextCommand ?? (_convertTextCommand = new DelegateCommand(param => ConvertText(param), CanExecuteAttachmentChecked()));
+            //}
+            get { return new DelegateCommand(ConvertText, true); }
         }
-
 
         private bool CanExecuteAttachmentChecked()
         {
             return true;
         }
 
-        public ICommand AddTextFromFileCommand
+        private ICommand _createFileCommand;
+
+        public ICommand CreateFileCommand
         {
-            get { return new DelegateCommand(AddTextFromFile, true); }
+            get
+            {
+                return _createFileCommand ?? (_createFileCommand = new DelegateCommand(param => CreateFile(param), CanExecuteAttachmentChecked()));
+            }
         }
+
+        //public ICommand AddTextFromFileCommand
+        //{
+        //    get { return new DelegateCommand(AddTextFromFile, true); }
+        //}
 
         public ICommand DeleteLineFromTextCommand
         {
             get { return new DelegateCommand(DeleteLineFromText, true); }
         }
 
+        ICommand _getFilePath;
+        public ICommand GetFilePathCommand
+        {
+            get
+            {
+                return _getFilePath ?? (_getFilePath = new DelegateCommand(param => OpenFile(param, true, null), CanExecuteAttachmentChecked()));
+            }
+        }
+
         #endregion
 
         #region command-methods
 
+        private void CreateFile(object obj)
+        {
+            string path = "";
+
+            switch (obj.ToString())
+            {
+                case "AllUsers":
+                    path = "AllUsers.txt";
+                    break;
+
+                case "WhiteUsers":
+                    path = "WhiteUsersList.txt";
+                    break;
+            }
+
+            if (File.Exists(path))
+            {
+                _windowsController.ShowMessage("Файл уже существует.");
+                OpenFile(obj, false, path);
+            }
+            else
+            {
+                FileStream file = File.Create(path);
+                _windowsController.ShowMessage("Файл создан.");
+            }
+        }
+
+        private void OpenFile(object buttonName, bool isItNewFile, string filePath)
+        {
+            if (isItNewFile)
+            {
+                filePath = _windowsController.ShowFileDialog();
+            }
+
+            ClearHistory();
+
+            if (filePath != null && filePath != "")
+            {
+                switch (buttonName.ToString())
+                {
+                    case "AllUsers":
+                        AllUsersFilePath = filePath;
+                        _allUsersList.Clear();
+                        break;
+
+                    case "WhiteUsers":
+                        WhiteUsersFilePath = filePath;
+                        _whiteListHistory.Clear();
+                        break;
+                }
+
+                fileModel.FilePath = filePath;
+                GetTextFromFile(buttonName.ToString());
+                ChangeList();
+
+
+                ////ClearHistory();
+                //Debug.Write("File path: " + filePath);
+
+                //switch (buttonName.ToString())
+                //{
+                //    case "AllUsers":
+                //        AllUsersFilePath = filePath;
+                //        _allUsersList.Clear();
+                //        break;
+
+                //    case "WhiteUsers":
+                //        WhiteUsersFilePath = filePath;
+                //        _whiteListHistory.Clear();
+                //        break;
+                //}
+                ////ChangeCurrentFile();
+                ////fileModel.FilePath = filePath;
+                //fileModel.FilePath = FilePath;
+                //GetTextFromFile(buttonName.ToString());
+            }
+            else
+            {
+                _windowsController.ShowMessage("Ошибка файла");
+            }
+        }
+
         private void ChangeList()
         {
-            if (_isAllusersListSelected )
+            ChangeCurrentFile();
+
+            if (_isAllusersListSelected == false)
             {
                 for (int i = 0; i < _history.Count; i++)
                 {
@@ -214,8 +334,7 @@ namespace MinimalMVVM
         }
 
 
-
-        private void ConvertText(object parameter)
+        private void ConvertText()
         {
             if (IsHttp == true)
             {
@@ -238,27 +357,52 @@ namespace MinimalMVVM
             catch (System.ArgumentNullException) { }
             catch (System.ArgumentOutOfRangeException) { }
 
+
+
+            if (_isAllusersListSelected) DeleteLineFromList(_allUsersList);
+            else DeleteLineFromList(_whiteListHistory);
+
             DeleteLineHistory();
+
             SaveChangesInFile();
         }
 
-        private void AddTextFromFile()
-        {
-            ClearHistory();
-            SelectFile();
+        //private void SelectFile()
+        //{
+        //    string filePath = _windowsController.ShowFileDialog();
+        //    if (filePath != null)
+        //    {
+        //        fileModel.FilePath = filePath;
+        //    }
+        //}
 
-            GetTextFromFile();
-            SaveChangesInFile();
-        }
+        //private void AddTextFromFile()
+        //{
+        //    ClearHistory();
+        //    SelectFile();
+
+        //    GetTextFromFile();
+        //    SaveChangesInFile();
+        //}
+
+
         #endregion
 
         #region helpers
 
         // File section
 
-        private void GetTextFromFile()
+
+
+        private void ChangeCurrentFile()
         {
-            if (fileModel.FilePath != null)
+            if (IsAllUsersListSelected) fileModel.FilePath = fileModel.AllUsersFilePath;
+            else fileModel.FilePath = fileModel.WhiteUsersFilePath;
+        }
+
+        private void GetTextFromFile(string listName)
+        {
+            if (fileModel.FilePath != null && fileModel.FilePath != "")
             {
                 var fileStream = new FileStream(fileModel.FilePath, FileMode.Open);
                 var streamReader = new StreamReader(fileStream, System.Text.Encoding.Default);
@@ -266,30 +410,44 @@ namespace MinimalMVVM
                 string data = null;
                 while ((data = streamReader.ReadLine()) != null)
                 {
-                    _history.Add(data);
+                    switch (listName)
+                    {
+                        case "AllUsers":
+                            _allUsersList.Add(data);
+                            break;
+
+                        case "WhiteUsers":
+                            _whiteListHistory.Add(data);
+                            break;
+                    }
+
+                    //_history.Add(data);
                 }
+
+                Debug.WriteLine("_allUsersList length: " + _allUsersList.Count);
+                Debug.WriteLine("_whiteListHistory length: " + _whiteListHistory.Count);
+                Debug.WriteLine("History length: " + _history.Count);
 
                 fileStream.Close();
                 streamReader.Close();
             }
+            else { _windowsController.ShowMessage("Ошибка файла"); }
         }
 
         public void SaveChangesInFile()
         {
-            if (fileModel.FilePath != null)
+            try
             {
-                File.WriteAllLines(fileModel.FilePath, _history.ToList<string>());
+                if (fileModel.FilePath != null)
+                {
+                    File.WriteAllLines(fileModel.FilePath, _history.ToList<string>());
+                }
             }
+            catch (System.UnauthorizedAccessException ex) { _windowsController.ShowMessage(ex.Message); }
+            catch (System.Exception ex) { _windowsController.ShowMessage(ex.Message); }
         }
 
-        private void SelectFile()
-        {
-            string filePath = _windowsController.ShowFileDialog();
-            if (filePath != null)
-            {
-                fileModel.FilePath = filePath;
-            }
-        }
+
 
         //TweetSharp section
 
@@ -348,6 +506,14 @@ namespace MinimalMVVM
             if (_selectedLineIndex != null && _selectedLineIndex >= 0)
             {
                 _history.RemoveAt((int)_selectedLineIndex);
+            }
+        }
+
+        private void DeleteLineFromList(ObservableCollection<string> list)
+        {
+            if (_selectedLineIndex != null && _selectedLineIndex >= 0)
+            {
+                list.RemoveAt((int)_selectedLineIndex);
             }
         }
         #endregion

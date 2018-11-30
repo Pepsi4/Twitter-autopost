@@ -1,4 +1,6 @@
-﻿namespace MinimalMVVM.Views
+﻿using Microsoft.Win32;
+
+namespace MinimalMVVM.Views
 {
     public partial class WindowControl : IWindowsController
     {
@@ -11,8 +13,14 @@
 
         public string ShowFileDialog()
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            return dlg.FileName;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.ShowDialog();
+            return openFileDialog.FileName;
+        }
+
+        public void ShowMessage(string msg)
+        {
+            System.Windows.MessageBox.Show(msg);
         }
     }
 }
