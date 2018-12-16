@@ -13,14 +13,14 @@ namespace MinimalMVVM
     public class WindowViewModel : ObservableObject
     {
         #region constructors
-        public WindowViewModel() { ChangeList(); }
+        public WindowViewModel() { }
 
         public WindowViewModel(IWindowsController windowsController)
         {
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
 
-            ChangeList();
+            // ChangeList();
         }
         #endregion
 
@@ -32,42 +32,43 @@ namespace MinimalMVVM
 
         private ObservableCollection<string> _history = new ObservableCollection<string>();
 
-        private ObservableCollection<string> _allUsersList = new ObservableCollection<string>();
-        private ObservableCollection<string> _whiteListHistory = new ObservableCollection<string>();
 
-        public string AllUsersFilePath
-        {
-            get { return fileModel.AllUsersFilePath; }
-            set
-            {
-                fileModel.AllUsersFilePath = value;
-                RaisePropertyChangedEvent(nameof(AllUsersFilePath));
-            }
-        }
+        //private ObservableCollection<string> _allUsersList = new ObservableCollection<string>();
+        //private ObservableCollection<string> _whiteListHistory = new ObservableCollection<string>();
 
-        public string WhiteUsersFilePath
-        {
-            get { return fileModel.WhiteUsersFilePath; }
-            set
-            {
-                fileModel.WhiteUsersFilePath = value;
-                RaisePropertyChangedEvent(nameof(WhiteUsersFilePath));
-            }
-        }
+        //public string AllUsersFilePath
+        //{
+        //    get { return FileModel.AllUsersFilePath; }
+        //    set
+        //    {
+        //        FileModel.AllUsersFilePath = value;
+        //        RaisePropertyChangedEvent(nameof(AllUsersFilePath));
+        //    }
+        //}
 
-        private bool _isAllusersListSelected = true;
-        public bool IsAllUsersListSelected
-        {
-            get { return _isAllusersListSelected; }
-            set
-            {
-                if (_isAllusersListSelected != value)
-                {
-                    _isAllusersListSelected = value;
-                    ChangeList();
-                }
-            }
-        }
+        //public string WhiteUsersFilePath
+        //{
+        //    get { return FileModel.WhiteUsersFilePath; }
+        //    set
+        //    {
+        //        FileModel.WhiteUsersFilePath = value;
+        //        RaisePropertyChangedEvent(nameof(WhiteUsersFilePath));
+        //    }
+        //}
+
+        //private bool _isAllusersListSelected = true;
+        //public bool IsAllUsersListSelected
+        //{
+        //    get { return _isAllusersListSelected; }
+        //    set
+        //    {
+        //        if (_isAllusersListSelected != value)
+        //        {
+        //            _isAllusersListSelected = value;
+        //            ChangeList();
+        //        }
+        //    }
+        //}
 
         private string _someText;
         public string SomeText
@@ -82,6 +83,7 @@ namespace MinimalMVVM
                 RaisePropertyChangedEvent(nameof(SomeText));
             }
         }
+
 
         private string _filePath;
         public string FilePath
@@ -160,10 +162,15 @@ namespace MinimalMVVM
 
         #region commands
 
-        public ICommand ChangeListCommand
+        public ICommand OpenUsersListFormCommand
         {
-            get { return new DelegateCommand(ChangeList, true); }
+            get { return new DelegateCommand(OpenUsersListForm, true); }
         }
+
+        //public ICommand ChangeListCommand
+        //{
+        //    get { return new DelegateCommand(ChangeList, true); }
+        //}
 
         //ICommand _convertTextCommand;
         public ICommand ConvertTextCommand
@@ -213,6 +220,12 @@ namespace MinimalMVVM
 
         #region command-methods
 
+        private void OpenUsersListForm()
+        {
+            Views.UsersProfile usersListForm = new Views.UsersProfile();
+            usersListForm.Show();
+        }
+
         private void CreateFile(object obj)
         {
             string path = "";
@@ -251,22 +264,22 @@ namespace MinimalMVVM
 
             if (filePath != null && filePath != "")
             {
-                switch (buttonName.ToString())
-                {
-                    case "AllUsers":
-                        AllUsersFilePath = filePath;
-                        _allUsersList.Clear();
-                        break;
+                FileModel.TweetsPath = filePath;
+                //switch (buttonName.ToString())
+                //{
+                //    case "AllUsers":
+                //        AllUsersFilePath = filePath;
+                //        _allUsersList.Clear();
+                //        break;
 
-                    case "WhiteUsers":
-                        WhiteUsersFilePath = filePath;
-                        _whiteListHistory.Clear();
-                        break;
-                }
+                //    case "WhiteUsers":
+                //        WhiteUsersFilePath = filePath;
+                //        _whiteListHistory.Clear();
+                //        break;
+                //}
 
-                fileModel.FilePath = filePath;
                 GetTextFromFile(buttonName.ToString());
-                ChangeList();
+                //ChangeList();
 
 
                 ////ClearHistory();
@@ -295,75 +308,64 @@ namespace MinimalMVVM
             }
         }
 
-        private void ChangeList()
-        {
-            ChangeCurrentFile();
+        //private void ChangeList()
+        //{
+        //    ChangeCurrentFile();
 
-            if (_isAllusersListSelected == false)
-            {
-                for (int i = 0; i < _history.Count; i++)
-                {
-                    if (_allUsersList.Contains(_history[i]) == false)
-                        _allUsersList.Add(_history[i]);
-                }
+        //    if (_isAllusersListSelected == false)
+        //    {
+        //        for (int i = 0; i < _history.Count; i++)
+        //        {
+        //            if (_allUsersList.Contains(_history[i]) == false)
+        //                _allUsersList.Add(_history[i]);
+        //        }
 
-                _history.Clear();
+        //        _history.Clear();
 
-                for (int i = 0; i < _whiteListHistory.Count; i++)
-                {
-                    if (_history.Contains(_whiteListHistory[i]) == false)
-                        _history.Add(_whiteListHistory[i]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < _history.Count; i++)
-                {
-                    if (_whiteListHistory.Contains(_history[i]) == false)
-                        _whiteListHistory.Add(_history[i]);
-                }
+        //        for (int i = 0; i < _whiteListHistory.Count; i++)
+        //        {
+        //            if (_history.Contains(_whiteListHistory[i]) == false)
+        //                _history.Add(_whiteListHistory[i]);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        for (int i = 0; i < _history.Count; i++)
+        //        {
+        //            if (_whiteListHistory.Contains(_history[i]) == false)
+        //                _whiteListHistory.Add(_history[i]);
+        //        }
 
-                _history.Clear();
+        //        _history.Clear();
 
-                for (int i = 0; i < _allUsersList.Count; i++)
-                {
-                    if (_history.Contains(_allUsersList[i]) == false)
-                        _history.Add(_allUsersList[i]);
-                }
-            }
-        }
+        //        for (int i = 0; i < _allUsersList.Count; i++)
+        //        {
+        //            if (_history.Contains(_allUsersList[i]) == false)
+        //                _history.Add(_allUsersList[i]);
+        //        }
+        //    }
+        //}
 
 
         private void ConvertText()
         {
-            if (IsHttp == true)
-            {
-                AddHttpText();
-            }
-            else
-            {
-                AddIdText();
-            }
+            AddToHistory(SomeText);
+            ClearInput();
+            SaveChangesInFile();
         }
 
         private void DeleteLineFromText()
         {
             try
             {
-                List<string> linesList = File.ReadAllLines(fileModel.FilePath).ToList();
+                List<string> linesList = File.ReadAllLines(FileModel.TweetsPath).ToList();
                 linesList.RemoveAt((int)_selectedLineIndex);
-                File.WriteAllLines(fileModel.FilePath, _history);
+                File.WriteAllLines(FileModel.TweetsPath, _history);
             }
             catch (System.ArgumentNullException) { }
             catch (System.ArgumentOutOfRangeException) { }
 
-
-
-            if (_isAllusersListSelected) DeleteLineFromList(_allUsersList);
-            else DeleteLineFromList(_whiteListHistory);
-
             DeleteLineHistory();
-
             SaveChangesInFile();
         }
 
@@ -394,38 +396,27 @@ namespace MinimalMVVM
 
 
 
-        private void ChangeCurrentFile()
-        {
-            if (IsAllUsersListSelected) fileModel.FilePath = fileModel.AllUsersFilePath;
-            else fileModel.FilePath = fileModel.WhiteUsersFilePath;
-        }
+        //private void ChangeCurrentFile()
+        //{
+        //    if (IsAllUsersListSelected) fileModel.FilePath = FileModel.AllUsersFilePath;
+        //    else fileModel.FilePath = FileModel.WhiteUsersFilePath;
+        //}
 
         private void GetTextFromFile(string listName)
         {
-            if (fileModel.FilePath != null && fileModel.FilePath != "")
+            if (FileModel.TweetsPath != null && FileModel.TweetsPath != "")
             {
-                var fileStream = new FileStream(fileModel.FilePath, FileMode.Open);
+                var fileStream = new FileStream(FileModel.TweetsPath, FileMode.Open);
                 var streamReader = new StreamReader(fileStream, System.Text.Encoding.Default);
 
                 string data = null;
                 while ((data = streamReader.ReadLine()) != null)
                 {
-                    switch (listName)
-                    {
-                        case "AllUsers":
-                            _allUsersList.Add(data);
-                            break;
-
-                        case "WhiteUsers":
-                            _whiteListHistory.Add(data);
-                            break;
-                    }
-
-                    //_history.Add(data);
+                    AddToHistory(data);
                 }
 
-                Debug.WriteLine("_allUsersList length: " + _allUsersList.Count);
-                Debug.WriteLine("_whiteListHistory length: " + _whiteListHistory.Count);
+                //Debug.WriteLine("_allUsersList length: " + _allUsersList.Count);
+                //Debug.WriteLine("_whiteListHistory length: " + _whiteListHistory.Count);
                 Debug.WriteLine("History length: " + _history.Count);
 
                 fileStream.Close();
@@ -438,12 +429,12 @@ namespace MinimalMVVM
         {
             try
             {
-                if (fileModel.FilePath != null)
+                if (FileModel.TweetsPath != null)
                 {
-                    File.WriteAllLines(fileModel.FilePath, _history.ToList<string>());
+                    File.WriteAllLines(FileModel.TweetsPath, _history.ToList<string>());
                 }
             }
-            catch (System.UnauthorizedAccessException ex) { _windowsController.ShowMessage(ex.Message); }
+            catch (System.UnauthorizedAccessException) { _windowsController.ShowMessage("Ошибка файла. Попробуйте создать или указать файл."); }
             catch (System.Exception ex) { _windowsController.ShowMessage(ex.Message); }
         }
 
@@ -451,39 +442,33 @@ namespace MinimalMVVM
 
         //TweetSharp section
 
-        private void SetUserName()
-        {
-            twitterUserModel.UserName = _someText.Substring(_someText.IndexOf("/", 15) + 1);  //converting http to user's name. //magic numbers in mvvm??
-        }
+        //private void SetUserName()
+        //{
+        //    twitterUserModel.UserName = _someText.Substring(_someText.IndexOf("/", 15) + 1);  //converting http to user's name. //magic numbers in mvvm??
+        //}
 
-        private void ConvertHttpToId()
-        {
-            var user = service.GetUserProfileFor(new GetUserProfileForOptions
-            {
-                ScreenName = twitterUserModel.UserName
-            });
+        //private void ConvertHttpToId()
+        //{
+        //    var user = service.GetUserProfileFor(new GetUserProfileForOptions
+        //    {
+        //        ScreenName = twitterUserModel.UserName
+        //    });
 
-            twitterUserModel.UserId = user.Id;
-        }
+        //    twitterUserModel.UserId = user.Id;
+        //}
 
         //History section
 
-        private void AddIdText()
-        {
-            AddToHistory(SomeText);
-            ClearInput();
-            SaveChangesInFile();
-        }
 
-        private void AddHttpText()
-        {
-            if (string.IsNullOrWhiteSpace(SomeText)) return;    // Checks if we have something in the field.
-            SetUserName();                                      // Converts http to user`s name.
-            ConvertHttpToId();                                  // Converts user's name to his id.
-            AddToHistory(twitterUserModel.UserId.ToString());   // Adds to history.
-            ClearInput();                                       // Deletes text in the input field
-            SaveChangesInFile();                                // Saves history to the file.
-        }
+        //private void AddHttpText()
+        //{
+        //    if (string.IsNullOrWhiteSpace(SomeText)) return;    // Checks if we have something in the field.
+        //    SetUserName();                                      // Converts http to user`s name.
+        //    ConvertHttpToId();                                  // Converts user's name to his id.
+        //    AddToHistory(twitterUserModel.UserId.ToString());   // Adds to history.
+        //    ClearInput();                                       // Deletes text in the input field
+        //    SaveChangesInFile();                                // Saves history to the file.
+        //}
 
         private void ClearInput()
         {

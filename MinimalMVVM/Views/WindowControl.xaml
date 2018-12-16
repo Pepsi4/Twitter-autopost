@@ -2,9 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             Height="476.332" Width="567.667">
+             Height="509.332" Width="567.667">
 
     <!--xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"-->
     <!--d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}"-->
@@ -28,58 +29,55 @@
         </Style>
     </UserControl.Style>
 
-    <StackPanel Margin="10,-13,9.667,-14.333">
+    <StackPanel Margin="10,-13,10,-38" Background="White">
 
 
         <StackPanel Orientation="Horizontal">
-            <Label MinWidth="140">Лист пользователей</Label>
+            <Label MinWidth="140" Content="Список ваших твитов"/>
             <Label Content="{Binding AllUsersFilePath, UpdateSourceTrigger=PropertyChanged}" MinWidth="200" MaxWidth="200"></Label>
             <Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="AllUsers" Content="Создать"/>
             <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" CommandParameter="AllUsers" Width="100" Content="Открыть"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal">
-            <Label MinWidth="140">Белый лист</Label>
             <Label Content="{Binding WhiteUsersFilePath, UpdateSourceTrigger=PropertyChanged}" MaxWidth="200" MinWidth="200"></Label>
-            <Button HorizontalAlignment="Right" Command="{Binding CreateFileCommand}" CommandParameter="WhiteUsers" Width="100" >Создать</Button>
-            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" CommandParameter="WhiteUsers" Width="100" Content="Открыть"/>
         </StackPanel>
+
+        <Button  Command="{Binding OpenUsersListFormCommand}" Margin="333,0,0,0" Width="200" Content="Настройки пользователя" />
+
 
         <Label Foreground="Blue" Margin="5,40,5,0" Height="27">Текст файла</Label>
         <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-            <RadioButton  IsChecked="{Binding IsAllUsersListSelected, UpdateSourceTrigger=PropertyChanged}"  MinWidth="300">Лист пользователей</RadioButton>
-            <RadioButton  MinWidth="300">Белый лист</RadioButton>
             <!--Command="{Binding ChangeListCommand}"-->
         </StackPanel>
 
         <ListBox SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5"/>
 
-        <StackPanel Orientation="Horizontal">
-            <RadioButton MinWidth="70" Name="id_radio" IsEnabled="{Binding ElementName=http_radio}" IsChecked="True">ID</RadioButton>
-            <RadioButton MinWidth="100" IsChecked="{Binding IsHttp}" Name="http_radio">HTTP</RadioButton>
-        </StackPanel>
+        <StackPanel Orientation="Horizontal"/>
 
-        <GroupBox Visibility="{Binding ElementName=id_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
-            
-            <StackPanel>
-                <Label Foreground="Blue" Margin="5,5,5,0">ID пользователя</Label>
-            </StackPanel>
-        </GroupBox>
+  
 
 
 
         <GroupBox Visibility="{Binding ElementName=http_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
             <StackPanel>
-                <Label Foreground="Blue" Margin="5,5,5,0">HTTP</Label>
                 <!--<TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>-->
             </StackPanel>
         </GroupBox>
 
-        <TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>
-
         <StackPanel Orientation="Horizontal">
-            <Button MinWidth="200" Command="{Binding ConvertTextCommand}" CommandParameter="1"  Content="Добавить строку в файл"/>
-            <Button MinWidth="200" Command="{Binding DeleteLineFromTextCommand}" Content="Удалить выбранную строку из файла"/>
+            <Label Foreground="Blue" Width="150" Content="Текст твита"/>
+            <TextBox Width="300" Height="48" Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <Label Width="150" Foreground="Blue" Content="Время поста твита"/>
+            <wpfTool:DateTimePicker></wpfTool:DateTimePicker>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <Button MinWidth="200" Command="{Binding ConvertTextCommand}" CommandParameter="1"  Content="Добавить твит"/>
+            <Button MinWidth="200" Command="{Binding DeleteLineFromTextCommand}" Content="Удалить твит"/>
         </StackPanel>
 
 
