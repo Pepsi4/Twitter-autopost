@@ -7,6 +7,7 @@ using System.Linq;
 using TweetSharp;
 using MinimalMVVM.ViewModels;
 using System.Diagnostics;
+using System;
 
 namespace MinimalMVVM
 {
@@ -69,6 +70,16 @@ namespace MinimalMVVM
         //        }
         //    }
         //}
+
+        private DateTime _dateTimeCurrent = DateTime.Today;
+        public DateTime DateTimeCurrent
+        {
+            get
+            {
+                return _dateTimeCurrent;
+            }
+            set { _dateTimeCurrent = value; }
+        }
 
         private string _someText;
         public string SomeText
@@ -349,7 +360,7 @@ namespace MinimalMVVM
 
         private void ConvertText()
         {
-            AddToHistory(SomeText);
+            AddToHistory(SomeText, _dateTimeCurrent);
             ClearInput();
             SaveChangesInFile();
         }
@@ -484,6 +495,12 @@ namespace MinimalMVVM
         {
             if (!_history.Contains(item))
                 _history.Add(item);
+        }
+
+        private void AddToHistory(string item, DateTime date)
+        {
+            if (!_history.Contains(item))
+                _history.Add(item + " " + date);
         }
 
         private void DeleteLineHistory()

@@ -1,99 +1,120 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using TweetSharp;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using MinimalMVVM.ViewModels;
+using System.Diagnostics;
 
 namespace MinimalMVVM
 {
     class UsersProfileViewModel : ObservableObject
     {
-        private string _usersName;
-        public string UsersName
-        {
-            get { return _usersName; }
-            set { _usersName = value; }
+        public string ConsumerKey {
+            get { return Models.TwitterUserModel.ConsumerKey; }
+            set { Models.TwitterUserModel.ConsumerKey = value; }
         }
 
-        private static string ConsumerKey = "v9bAQmu0Rw1v03hGc8WmafGqm";
-        private static string ConsumerSecret = "nGwlUdqOePtqtNeFJVYfsagqhzqRvqjeK81Qqm3butPtNG8Rar";
-        private static string _accessToken = "936666867258753024-ZCvQoYYlu1bbbYPzP44NyTBWRIltPxE";
-        private static string _accessTokenSecret = "DLLbB105wfh3EJMHt9dxSXZIu5zhlQso4NtNDw9Szhslj";
-
-        private static TwitterService service = new TwitterService(ConsumerKey, ConsumerSecret, _accessToken, _accessTokenSecret);
-        private List<string> _allUsersList = new List<string>();
-
-        //private ICommand _updateAllUsersListCommand;
-        public ICommand UpdateAllUsersListCommand
+        public string ConsumerSecret
         {
-            get
-            {
-                return new DelegateCommand(Test, true);
-            }
+            get { return Models.TwitterUserModel.ConsumerSecret; }
+            set { Models.TwitterUserModel.ConsumerSecret = value; }
         }
 
-        private void Test()
+        public string AccessToken
         {
-            TwitterUser tuSelf = service.GetUserProfile(
-    new GetUserProfileOptions() { IncludeEntities = false, SkipStatus = false });
-
-            ListFollowersOptions options = new ListFollowersOptions();
-            options.UserId = tuSelf.Id;
-            options.ScreenName = tuSelf.ScreenName;
-            options.IncludeUserEntities = true;
-            options.SkipStatus = false;
-            options.Cursor = -1;
-            List<TwitterUser> lstFollowers = new List<TwitterUser>();
-
-            TwitterCursorList<TwitterUser> followers = service.ListFollowers(options);
-
-            // if the API call did not succeed
-            if (followers == null)
-            {
-                // handle the error
-                // see service.Response and/or service.Response.Error for details
-            }
-            else
-            {
-                while (followers.NextCursor != null)
-                {
-                    //options.Cursor = followers.NextCursor;
-                    //followers = m_twService.ListFollowers(options);
-
-                    // if the API call did not succeed
-                    if (followers == null)
-                    {
-                        // handle the error
-                        // see service.Response and/or service.Response.Error for details
-                    }
-                    else
-                    {
-                        foreach (TwitterUser user in followers)
-                        {
-                            // do something with the user (I'm adding them to a List)
-                            lstFollowers.Add(user);
-                        }
-                    }
-
-                    // if there are more followers
-                    if (followers.NextCursor != null &&
-                        followers.NextCursor != 0)
-                    {
-                        // then advance the cursor and load the next page of results
-                        options.Cursor = followers.NextCursor;
-                        followers = service.ListFollowers(options);
-                    }
-                    // otherwise, we're done!
-                    else
-                        break;
-                }
-            }
-
-            System.Windows.MessageBox.Show(followers[0].Name);
+            get { return Models.TwitterUserModel.AccessToken; }
+            set { Models.TwitterUserModel.AccessToken = value; }
         }
+
+        public string AccessTokenSecret
+        {
+            get { return Models.TwitterUserModel.AccessTokenSecret; }
+            set { Models.TwitterUserModel.AccessTokenSecret = value; }
+        }
+
+        public ICommand SaveProfileCommand
+        {
+            get { return new DelegateCommand(SaveProfile, true); }
+        }
+
+        private void SaveProfile()
+        {
+            Debug.WriteLine(ConsumerKey);
+            Debug.WriteLine(ConsumerSecret);
+            Debug.WriteLine(AccessToken);
+            Debug.WriteLine(AccessTokenSecret);
+        }
+
+
+
+        //private static TwitterService service = new TwitterService(ConsumerKey, ConsumerSecret, _accessToken, _accessTokenSecret);
+        //private List<string> _allUsersList = new List<string>();
+
+        ////private ICommand _updateAllUsersListCommand;
+        //public ICommand UpdateAllUsersListCommand
+        //{
+        //    get
+        //    {
+        //        return new DelegateCommand(Test, true);
+        //    }
+        //}
+
+        //    private void Test()
+        //    {
+        //        TwitterUser tuSelf = service.GetUserProfile(
+        //new GetUserProfileOptions() { IncludeEntities = false, SkipStatus = false });
+
+        //        ListFollowersOptions options = new ListFollowersOptions();
+        //        options.UserId = tuSelf.Id;
+        //        options.ScreenName = tuSelf.ScreenName;
+        //        options.IncludeUserEntities = true;
+        //        options.SkipStatus = false;
+        //        options.Cursor = -1;
+        //        List<TwitterUser> lstFollowers = new List<TwitterUser>();
+
+        //        TwitterCursorList<TwitterUser> followers = service.ListFollowers(options);
+
+        //        // if the API call did not succeed
+        //        if (followers == null)
+        //        {
+        //            // handle the error
+        //            // see service.Response and/or service.Response.Error for details
+        //        }
+        //        else
+        //        {
+        //            while (followers.NextCursor != null)
+        //            {
+        //                //options.Cursor = followers.NextCursor;
+        //                //followers = m_twService.ListFollowers(options);
+
+        //                // if the API call did not succeed
+        //                if (followers == null)
+        //                {
+        //                    // handle the error
+        //                    // see service.Response and/or service.Response.Error for details
+        //                }
+        //                else
+        //                {
+        //                    foreach (TwitterUser user in followers)
+        //                    {
+        //                        // do something with the user (I'm adding them to a List)
+        //                        lstFollowers.Add(user);
+        //                    }
+        //                }
+
+        //                // if there are more followers
+        //                if (followers.NextCursor != null &&
+        //                    followers.NextCursor != 0)
+        //                {
+        //                    // then advance the cursor and load the next page of results
+        //                    options.Cursor = followers.NextCursor;
+        //                    followers = service.ListFollowers(options);
+        //                }
+        //                // otherwise, we're done!
+        //                else
+        //                    break;
+        //            }
+        //        }
+
+        //        System.Windows.MessageBox.Show(followers[0].Name);
+        //    }
 
         //private void UpdateAllUsersList()
         //{
@@ -108,7 +129,7 @@ namespace MinimalMVVM
         //        var users = service.ListFollowers(new ListFollowersOptions
         //        {
         //            ScreenName = _usersName,
-                   
+
         //        });
 
         //        _allUsersList.Add(users[0].Name);

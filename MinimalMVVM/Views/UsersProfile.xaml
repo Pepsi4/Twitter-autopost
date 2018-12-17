@@ -4,10 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="UsersProfile" Height="188" Width="276">
+        Title="UsersProfile" Height="185.778" Width="417.778">
     <Grid Margin="0,0,-18.667,-3.667">
-        <Label Content="Имя вашего профиля" HorizontalAlignment="Left" Margin="7,26,0,0" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding UsersName, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="130,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" AutomationProperties.HelpText="http://"/>
-        <Button Command="{Binding UpdateAllUsersListCommand}" Content="Обновить список фолловеров"  HorizontalAlignment="Left" Margin="74,57,0,0" VerticalAlignment="Top" Width="165"/>
+        <Label Content="ConsumerKey" HorizontalAlignment="Left" Margin="2,10,0,0" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding ConsumerKey, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="22" Margin="131,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="257" />
+        <Button Command="{Binding SaveProfileCommand}" Content="Сохранить"  HorizontalAlignment="Left" Margin="285,119,0,0" VerticalAlignment="Top" Width="103"/>
+        <Label Content="ConsumerSecret" HorizontalAlignment="Left" Margin="2,31,0,0" VerticalAlignment="Top"/>
+        <Label Content="AccessToken" HorizontalAlignment="Left" Margin="2,51,0,0" VerticalAlignment="Top"/>
+        <Label Content="AccessTokenSecret" HorizontalAlignment="Left" Margin="2,72,0,0" VerticalAlignment="Top"/>
+        <TextBox Text="{Binding ConsumerSecret, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="22" Margin="131,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="257" AutomationProperties.HelpText="http://"/>
+        <TextBox Text="{Binding AccessToken, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="22" Margin="131,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="257" AutomationProperties.HelpText="http://"/>
+        <TextBox Text="{Binding AccessTokenSecret, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="22" Margin="131,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="257" AutomationProperties.HelpText="http://"/>
     </Grid>
 </Window>
