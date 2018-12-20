@@ -360,9 +360,12 @@ namespace MinimalMVVM
 
         private void ConvertText()
         {
-            AddToHistory(SomeText, _dateTimeCurrent);
-            ClearInput();
-            SaveChangesInFile();
+            if (IsDateBiggerThanToday())
+            {
+                AddToHistory(SomeText, _dateTimeCurrent);
+                ClearInput();
+                SaveChangesInFile();
+            }
         }
 
         private void DeleteLineFromText()
@@ -403,8 +406,20 @@ namespace MinimalMVVM
 
         #region helpers
 
-        // File section
-
+        private bool IsDateBiggerThanToday()
+        {
+            if (DateTimeCurrent.Day > DateTime.Now.Day || 
+                ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour > DateTime.Now.Hour)) 
+                || ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour == DateTime.Now.Hour && DateTimeCurrent.Minute > DateTime.Now.Minute)))
+            {
+                return true;
+            }
+            else
+            {
+                _windowsController.ShowMessage("Дата выставлена неправильно");
+                return false;
+            }
+        }
 
 
         //private void ChangeCurrentFile()
