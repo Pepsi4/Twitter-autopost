@@ -7,9 +7,6 @@
              mc:Ignorable="d"
              Height="509.332" Width="567.667">
 
-    <!--xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"-->
-    <!--d:DataContext="{d:DesignInstance ViewModels:WindowViewModel}"-->
-
 
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
@@ -34,9 +31,9 @@
 
         <StackPanel Orientation="Horizontal">
             <Label MinWidth="140" Content="Список ваших твитов"/>
-            <Label Content="{Binding AllUsersFilePath, UpdateSourceTrigger=PropertyChanged}" MinWidth="200" MaxWidth="200"></Label>
-            <Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="AllUsers" Content="Создать"/>
-            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" CommandParameter="AllUsers" Width="100" Content="Открыть"/>
+            <Label Content="{Binding TweetsPath, UpdateSourceTrigger=PropertyChanged}" MinWidth="200" MaxWidth="200"></Label>
+            <Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="Tweets.txt" Content="Создать"/>
+            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" Width="100" Content="Открыть"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal">
@@ -48,10 +45,21 @@
 
         <Label Foreground="Blue" Margin="5,40,5,0" Height="27">Текст файла</Label>
         <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-            <!--Command="{Binding ChangeListCommand}"-->
+            
         </StackPanel>
-
-        <ListBox SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5"/>
+        
+        <ListBox SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Text}"></TextBlock>
+                        <TextBlock Text="{Binding Date}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            
+            
+        </ListBox>
 
         <StackPanel Orientation="Horizontal"/>
 
