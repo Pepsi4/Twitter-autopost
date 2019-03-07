@@ -6,7 +6,15 @@ namespace MinimalMVVM
 {
     class UsersProfileViewModel : ObservableObject
     {
-        public string ConsumerKey {
+        public UsersProfileViewModel()
+        {
+            GetKeysFromFile();
+        }
+
+        private string ApiKeysFilePath = "ApiKyes.txt";
+
+        public string ConsumerKey
+        {
             get { return Models.TwitterUserModel.ConsumerKey; }
             set { Models.TwitterUserModel.ConsumerKey = value; }
         }
@@ -31,126 +39,49 @@ namespace MinimalMVVM
 
         public ICommand SaveProfileCommand
         {
-            get { return new DelegateCommand(SaveProfile, true); }
+            get
+            {
+                return new DelegateCommand(SaveProfile, true);
+            }
+        }
+
+        private void GetKeysFromFile()
+        {
+            try
+            {
+                string[] lines = System.IO.File.ReadAllLines(ApiKeysFilePath);
+
+                ConsumerKey = lines[0];
+                ConsumerSecret = lines[1];
+                AccessToken = lines[2];
+                AccessTokenSecret = lines[3];
+            }
+            catch (System.IndexOutOfRangeException) { }
+            // if (System.IO.File.ReadAllBytes()) { }
+        }
+
+        private void ClearFile()
+        {
+            System.IO.File.WriteAllText(ApiKeysFilePath, string.Empty);
         }
 
         private void SaveProfile()
         {
+            ClearFile();
+
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(ApiKeysFilePath))
+            {
+                file.WriteLine(ConsumerKey);
+                file.WriteLine(ConsumerSecret);
+                file.WriteLine(AccessToken);
+                file.WriteLine(AccessTokenSecret);
+            }
+
             Debug.WriteLine(ConsumerKey);
             Debug.WriteLine(ConsumerSecret);
             Debug.WriteLine(AccessToken);
             Debug.WriteLine(AccessTokenSecret);
         }
-
-
-
-        //private static TwitterService service = new TwitterService(ConsumerKey, ConsumerSecret, _accessToken, _accessTokenSecret);
-        //private List<string> _allUsersList = new List<string>();
-
-        ////private ICommand _updateAllUsersListCommand;
-        //public ICommand UpdateAllUsersListCommand
-        //{
-        //    get
-        //    {
-        //        return new DelegateCommand(Test, true);
-        //    }
-        //}
-
-        //    private void Test()
-        //    {
-        //        TwitterUser tuSelf = service.GetUserProfile(
-        //new GetUserProfileOptions() { IncludeEntities = false, SkipStatus = false });
-
-        //        ListFollowersOptions options = new ListFollowersOptions();
-        //        options.UserId = tuSelf.Id;
-        //        options.ScreenName = tuSelf.ScreenName;
-        //        options.IncludeUserEntities = true;
-        //        options.SkipStatus = false;
-        //        options.Cursor = -1;
-        //        List<TwitterUser> lstFollowers = new List<TwitterUser>();
-
-        //        TwitterCursorList<TwitterUser> followers = service.ListFollowers(options);
-
-        //        // if the API call did not succeed
-        //        if (followers == null)
-        //        {
-        //            // handle the error
-        //            // see service.Response and/or service.Response.Error for details
-        //        }
-        //        else
-        //        {
-        //            while (followers.NextCursor != null)
-        //            {
-        //                //options.Cursor = followers.NextCursor;
-        //                //followers = m_twService.ListFollowers(options);
-
-        //                // if the API call did not succeed
-        //                if (followers == null)
-        //                {
-        //                    // handle the error
-        //                    // see service.Response and/or service.Response.Error for details
-        //                }
-        //                else
-        //                {
-        //                    foreach (TwitterUser user in followers)
-        //                    {
-        //                        // do something with the user (I'm adding them to a List)
-        //                        lstFollowers.Add(user);
-        //                    }
-        //                }
-
-        //                // if there are more followers
-        //                if (followers.NextCursor != null &&
-        //                    followers.NextCursor != 0)
-        //                {
-        //                    // then advance the cursor and load the next page of results
-        //                    options.Cursor = followers.NextCursor;
-        //                    followers = service.ListFollowers(options);
-        //                }
-        //                // otherwise, we're done!
-        //                else
-        //                    break;
-        //            }
-        //        }
-
-        //        System.Windows.MessageBox.Show(followers[0].Name);
-        //    }
-
-        //private void UpdateAllUsersList()
-        //{
-        //    var profile = service.GetUserProfileFor(new GetUserProfileForOptions
-        //    {
-        //        ScreenName = _usersName
-        //        , Co
-        //    });
-
-        //    for (int i = -1; i < profile.FollowersCount; i++)
-        //    {
-        //        var users = service.ListFollowers(new ListFollowersOptions
-        //        {
-        //            ScreenName = _usersName,
-
-        //        });
-
-        //        _allUsersList.Add(users[0].Name);
-        //    }
-
-
-
-
-        //    //foreach (var item in users)
-        //    //{
-        //    //    _allUsersList.Add(item.Name);
-        //    //}
-
-        //    FileModel fileModel = new FileModel();
-        //    fileModel.SaveChangesInFile(FileModel.AllUsersFilePath, _allUsersList);
-
-        //   // System.Windows.MessageBox.Show(users.Count.ToString());
-
-        //    System.Windows.MessageBox.Show(_allUsersList[0]);
-        //    System.Windows.MessageBox.Show(_allUsersList[1]);
-        //    System.Windows.MessageBox.Show(_allUsersList.Count.ToString());
-        //}
     }
 }
