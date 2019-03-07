@@ -5,7 +5,6 @@ namespace MinimalMVVM.ViewModels
 {
     public class DelegateCommand : ICommand
     {
-
         private Action<object> _action;
         private Action _actionNoParameter;
 
@@ -37,6 +36,5 @@ namespace MinimalMVVM.ViewModels
             else
                 _action(parameter);
         }
-
     }
 }

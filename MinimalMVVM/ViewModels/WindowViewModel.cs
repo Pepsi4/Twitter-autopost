@@ -289,7 +289,9 @@ namespace MinimalMVVM
 
         private string GetTextFromString(string str)
         {
-            int index = str.IndexOf(str.Split(' ').Last());
+            string[] strArray = str.Split(' ');
+
+            int index = str.IndexOf(strArray[strArray.Length - 2]);
             return str.Substring(0, index);
         }
 
@@ -414,12 +416,25 @@ namespace MinimalMVVM
         {
             try
             {
-                if (FileModel.TweetsPath != null)
+
+                using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(FileModel.TweetsPath, false))
                 {
-                    foreach (TextField item in _history)
+
+
+
+
+                    if (FileModel.TweetsPath != null)
                     {
-                        File.WriteAllText(FileModel.TweetsPath, item.Text + " " + item.Date);
+                        // _windowsController.ShowMessage(_history.Count.ToString());
+                        foreach (TextField item in _history)
+                        {
+                            file.WriteLine(item.Text + " " + item.Date);
+                            //File.WriteAllText(FileModel.TweetsPath, item.Text + " " + item.Date);
+                        }
                     }
+
+                    file.Close();
                 }
             }
             catch (System.UnauthorizedAccessException) { _windowsController.ShowMessage("Ошибка файла. Попробуйте создать или указать файл."); }
@@ -441,9 +456,7 @@ namespace MinimalMVVM
             if (!_history.Contains(item)) //item.Text + " " + item.Date
             {
                 _history.Add(item);
-                Debug.WriteLine(_history.Count);
-
-                History = _history;
+                //History = _history;
             }
         }
 

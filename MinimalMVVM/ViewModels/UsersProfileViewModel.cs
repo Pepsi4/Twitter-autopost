@@ -57,7 +57,6 @@ namespace MinimalMVVM
                 AccessTokenSecret = lines[3];
             }
             catch (System.IndexOutOfRangeException) { }
-            // if (System.IO.File.ReadAllBytes()) { }
         }
 
         private void ClearFile()
