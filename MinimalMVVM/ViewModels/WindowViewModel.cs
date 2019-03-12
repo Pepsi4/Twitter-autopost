@@ -230,7 +230,7 @@ namespace MinimalMVVM
 
         private void ConvertText()
         {
-            if (IsDateBiggerThanToday() && IsInputNotEmpty())
+            if (IsDateBiggerThanToday(DateTimeCurrent) && IsInputNotEmpty())
             {
                 AddToHistory(new TextField()
                 {
@@ -362,17 +362,17 @@ namespace MinimalMVVM
         }
 
         //ошибка на месяцах
-        private bool IsDateBiggerThanToday()
+        // For tests only. Do not use directly.
+        public bool IsDateBiggerThanToday(DateTime dateTime)
         {
-            if (DateTimeCurrent.Day > DateTime.Now.Day ||
-                ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour > DateTime.Now.Hour))
-                || ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour == DateTime.Now.Hour && DateTimeCurrent.Minute > DateTime.Now.Minute)))
+            if (dateTime > DateTime.Now)
             {
                 return true;
             }
             else
             {
-                _windowsController.ShowMessage("Дата выставлена неправильно");
+                try { _windowsController.ShowMessage("Дата выставлена неправильно"); }
+                catch (NullReferenceException ex) { Debug.WriteLine(ex.Message); }
                 return false;
             }
         }
