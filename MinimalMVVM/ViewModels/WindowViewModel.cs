@@ -238,6 +238,7 @@ namespace MinimalMVVM
                     Date = _dateTimeCurrent
                 });
                 ClearInput();
+                BubbleSort(History);
                 SaveChangesInFile();
             }
         }
@@ -361,7 +362,6 @@ namespace MinimalMVVM
             return service;
         }
 
-        //ошибка на месяцах
         // For tests only. Do not use directly.
         public bool IsDateBiggerThanToday(DateTime dateTime)
         {
@@ -375,6 +375,24 @@ namespace MinimalMVVM
                 catch (NullReferenceException ex) { Debug.WriteLine(ex.Message); }
                 return false;
             }
+        }
+
+        private ObservableCollection<TextField> BubbleSort(ObservableCollection<TextField> mas)
+        {
+            TextField temp;
+            for (int i = 0; i < mas.Count; i++)
+            {
+                for (int j = i + 1; j < mas.Count; j++)
+                {
+                    if (mas[i].Date > mas[j].Date)
+                    {
+                        temp = mas[i];
+                        mas[i] = mas[j];
+                        mas[j] = temp;
+                    }
+                }
+            }
+            return mas;
         }
 
         private bool IsInputNotEmpty()
