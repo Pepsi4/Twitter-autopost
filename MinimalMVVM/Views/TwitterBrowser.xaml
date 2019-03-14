@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="TwitterBrowser" Height="450.667" Width="537" Background="#FFD27373">
     <Grid>
-        <WebBrowser x:Name="webBrowser_1" local:WebBrowserHelper.Body="{Binding HtmlDoc}" HorizontalAlignment="Left" Height="333" Margin="10,10,0,0" VerticalAlignment="Top" Width="511"/>
+        <WebBrowser x:Name="webBrowser_1" local:WebBrowserHelper.Body="{Binding PinUrl}" HorizontalAlignment="Left" Height="333" Margin="10,10,0,0" VerticalAlignment="Top" Width="511"/>
         <TextBox Text="{Binding Verifier, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="37" Margin="72,361,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" FontSize="24"/>
         <Button Command="{Binding SendCodeCommand}" Content="Отправить код" HorizontalAlignment="Left" Margin="377,361,0,0" VerticalAlignment="Top" Width="102" Height="37">
             <Button.Background >

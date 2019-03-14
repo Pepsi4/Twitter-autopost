@@ -34,6 +34,15 @@ namespace MinimalMVVM
 
     public class TwitterBrowserViewModel : ObservableObject, IRequireViewIdentification
     {
+        TwitterUserModel twitterUserModel;
+
+        public TwitterBrowserViewModel()
+        {
+            twitterUserModel = new TwitterUserModel();
+            _viewId = Guid.NewGuid();
+            CreateTwitterClient();
+        }
+
         public ICommand SendCodeCommand
         {
             get { return new DelegateCommand(SendCode, true); }
@@ -45,68 +54,46 @@ namespace MinimalMVVM
         }
 
         private Guid _viewId;
-
         public Guid ViewID
         {
             get { return _viewId; }
         }
-
-        public TwitterBrowserViewModel()
-        {
-            _viewId = Guid.NewGuid();
-          CreateTwitterClient();
-        }
-
-        private Uri htmlDoc;
-        public Uri HtmlDoc
+        
+        public Uri PinUrl
         {
             get
             {
-                
-                return htmlDoc;
+                return twitterUserModel.PinUrl;
             }
             set
             {
-                htmlDoc = value;
+                twitterUserModel.PinUrl = value;
+                RaisePropertyChangedEvent(nameof(PinUrl));
             }
         }
-        private string verifier;
+
         public string Verifier
         {
             get
             {
-                return verifier;
+                return twitterUserModel.Verifier;
             }
             set
             {
-                verifier = value;
+                twitterUserModel.Verifier = value;
                 RaisePropertyChangedEvent(nameof(Verifier));
             }
         }
 
-
-        OAuthRequestToken token;
-        TwitterService service;
-
         public void CreateTwitterClient()
         {
-            TwitterClientInfo client = new TwitterClientInfo();
-            client.ConsumerKey = "BBfi7kpS5sR2Ad5FrkrhuVe7y";
-            client.ConsumerSecret = "BX5pLTGiQ4sqQXIHdEaQKL44wxmyes9E8KtyE7j08hmxhW1p0t";
-            service = new TwitterService(client);
-            token = service.GetRequestToken();
-            HtmlDoc = service.GetAuthorizationUri(token);
+            twitterUserModel.CreateTwitterService();
         }
 
         public void CheckCode()
         {
-            MessageBox.Show("test");
-            OAuthAccessToken accessToken =
-                service.GetAccessToken(token, Verifier);
-
-
-            service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-            WindowManagerModel.CloseWindow(ViewID);
+            if (twitterUserModel.TryLogin() == true)
+                WindowManagerModel.CloseWindow(ViewID);
         }
     }
 }

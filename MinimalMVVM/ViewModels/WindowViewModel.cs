@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using MinimalMVVM.Models;
 using System.IO;
 using System.Linq;
 using TweetSharp;
@@ -12,7 +11,7 @@ using System.Windows.Threading;
 
 namespace MinimalMVVM
 {
-    public struct TextField
+    public struct TweetField
     {
         public string Text { get; set; }
         public DateTime Date { get; set; }
@@ -27,21 +26,22 @@ namespace MinimalMVVM
         {
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
+            fileModel = new FileModel(windowsController);
+            timerModel = new TimerModel();
 
+            
             StartTimer();
+            RefreshTimer();
         }
         #endregion
 
         #region Properties
         IWindowsController _windowsController;
 
-        private readonly FileModel fileModel = new FileModel();
+        private readonly FileModel fileModel;
         private readonly TwitterUserModel twitterUserModel = new TwitterUserModel();
 
-        private ObservableCollection<TextField> _history = new ObservableCollection<TextField>();
-
-        private DispatcherTimer timer = null;
-        private int _duration = 1000;
+        private ObservableCollection<TweetField> _history = new ObservableCollection<TweetField>();
 
         private DateTime _dateTimeCurrent = DateTime.Today;
         public DateTime DateTimeCurrent
@@ -92,7 +92,7 @@ namespace MinimalMVVM
             }
         }
 
-        public ObservableCollection<TextField> History
+        public ObservableCollection<TweetField> History
         {
             get
             {
@@ -101,13 +101,14 @@ namespace MinimalMVVM
             set
             {
                 _history = value;
+                RefreshTimer();
                 RaisePropertyChangedEvent(nameof(History));
             }
         }
         #endregion
 
         #region commands
-        
+
 
         public ICommand ConvertTextCommand
         {
@@ -140,7 +141,6 @@ namespace MinimalMVVM
         #endregion
 
         #region command-methods
-        
 
         private void CreateFile(object obj)
         {
@@ -182,11 +182,12 @@ namespace MinimalMVVM
         {
             if (IsDateBiggerThanToday(DateTimeCurrent) && IsInputNotEmpty())
             {
-                AddToHistory(new TextField()
+                AddToHistory(new TweetField()
                 {
                     Text = SomeText,
                     Date = _dateTimeCurrent
                 });
+
                 ClearInput();
                 BubbleSort(History);
                 SaveChangesInFile();
@@ -210,28 +211,18 @@ namespace MinimalMVVM
         #endregion
 
         #region helpers
-        private DateTime GetDateFromString(string str)
-        {
-            DateTime date = Convert.ToDateTime(str.Split(' ').Last());
-            return date;
-        }
 
-        private string GetTextFromString(string str)
-        {
-            string[] strArray = str.Split(' ');
+        TimerModel timerModel;
 
-            int index = str.IndexOf(strArray[strArray.Length - 2]);
-            return str.Substring(0, index);
+        private void RefreshTimer()
+        {
+            timerModel.History = _history;
         }
 
         public void StartTimer()
         {
-            TwitterUserModel twitterUserModel = new TwitterUserModel();
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(_duration);
-            timer.Tick += (sender, e) => twitterUserModel.CheckTweetsByDate(History);
-            timer.Start();
+            timerModel = new TimerModel();
+            timerModel.CreateTimer();
         }
 
         // For tests only. Do not use directly.
@@ -249,9 +240,9 @@ namespace MinimalMVVM
             }
         }
 
-        private ObservableCollection<TextField> BubbleSort(ObservableCollection<TextField> mas)
+        private ObservableCollection<TweetField> BubbleSort(ObservableCollection<TweetField> mas)
         {
-            TextField temp;
+            TweetField temp;
             for (int i = 0; i < mas.Count; i++)
             {
                 for (int j = i + 1; j < mas.Count; j++)
@@ -280,48 +271,18 @@ namespace MinimalMVVM
 
         private void GetTextFromFile(string listName)
         {
-            if (FileModel.TweetsPath != null && FileModel.TweetsPath != "")
-            {
-                var fileStream = new FileStream(FileModel.TweetsPath, FileMode.Open);
-                var streamReader = new StreamReader(fileStream, System.Text.Encoding.Default);
+            //History = new ObservableCollection<TweetField>();
 
-                string data = null;
-                while ((data = streamReader.ReadLine()) != null)
-                {
-                    Debug.WriteLine("Reading new string in file...");
-                    AddToHistory(new TextField()
-                    {
-                        Text = GetTextFromString(data),
-                        Date = GetDateFromString(data)
-                    });
-                }
-
-                fileStream.Close();
-                streamReader.Close();
-            }
-            else { _windowsController.ShowMessage("Ошибка файла"); }
+            //foreach (var item in fileModel.GetTextFromFile())
+            //{
+            //    History.Add(item);
+            //}
+            History = new ObservableCollection<TweetField>(fileModel.GetTextFromFile());
         }
 
         public void SaveChangesInFile()
         {
-            try
-            {
-                using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(FileModel.TweetsPath, false))
-                {
-                    if (FileModel.TweetsPath != null)
-                    {
-                        foreach (TextField item in _history)
-                        {
-                            file.WriteLine(item.Text + " " + item.Date);
-                        }
-                    }
-
-                    file.Close();
-                }
-            }
-            catch (System.UnauthorizedAccessException) { _windowsController.ShowMessage("Ошибка файла. Попробуйте создать или указать файл."); }
-            catch (System.Exception ex) { _windowsController.ShowMessage(ex.Message); }
+            fileModel.SaveChangesInFile(History);
         }
 
         private void ClearInput()
@@ -334,12 +295,15 @@ namespace MinimalMVVM
             _history.Clear();
         }
 
-        private void AddToHistory(TextField item)
+        private void AddToHistory(TweetField item)
         {
             if (!_history.Contains(item))
             {
                 _history.Add(item);
             }
+
+            // the setter method is calling here.
+            History = History;
         }
 
         private void DeleteLineHistory()
@@ -350,38 +314,5 @@ namespace MinimalMVVM
             }
         }
         #endregion
-    }
-
-
-}
-
-namespace MinimalMVVM.Models
-{
-    public class TwitterTimerModel
-    {
-        private TwitterService service;
-        public TwitterTimerModel(TwitterService service)
-        {
-            this.service = service;
-        }
-
-        public void CheckTweetsByDate(ObservableCollection<TextField> tweets)
-        {
-            foreach (var tweet in tweets)
-            {
-                if (tweet.Date <= DateTime.Now)
-                {
-                    PostTweet();
-                }
-            }
-        }
-
-        private void PostTweet()
-        {
-            service.BeginSendTweet(new SendTweetOptions
-            {
-                Status = "test"
-            });
-        }
     }
 }

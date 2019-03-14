@@ -80,7 +80,11 @@
         
         <StackPanel Orientation="Horizontal">
             <Label Width="150" Foreground="Blue" Content="Время поста твита"/>
-            <wpfTool:DateTimePicker Value="{Binding DateTimeCurrent}"></wpfTool:DateTimePicker>
+            <wpfTool:DateTimePicker x:Name="dtpStartTime"  
+                                    Value="{Binding DateTimeCurrent}"
+                     Format="Custom" 
+                     FormatString="HH:mm tt" 
+                     Margin="5"/>
         </StackPanel>
         
         <StackPanel Orientation="Horizontal">

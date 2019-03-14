@@ -3,53 +3,43 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using TweetSharp;
 
-namespace MinimalMVVM.Models
+namespace MinimalMVVM
 {
     public class TwitterUserModel : ObservableObject
     {
-        public TwitterService Service { get; private set; }
+        public Uri PinUrl { get; set; }
 
-        public static string UserName { get; set; }
-
-        public static long UserId { get; set; }
-
-        public static string ConsumerKey { get; set; }
-
-        public static string ConsumerSecret { get; set; }
-
-        public static string AccessToken { get; set; }
-
-        public static string AccessTokenSecret { get; set; }
-
-        private TwitterService CreateService()
+        public OAuthRequestToken Token
         {
-            if (TwitterUserModel.ConsumerKey == null ||
-                TwitterUserModel.ConsumerSecret == null ||
-                TwitterUserModel.AccessToken == null ||
-                TwitterUserModel.AccessTokenSecret == null) { return null; }
-
-
-            TwitterService service = new TwitterService(TwitterUserModel.ConsumerKey,
-                TwitterUserModel.ConsumerSecret,
-                TwitterUserModel.AccessToken,
-                TwitterUserModel.AccessTokenSecret);
-
-            return service;
+            get; set;
         }
 
-        public void CheckTweetsByDate(ObservableCollection<TextField> tweets)
+        public static TwitterService Service { get; private set; }
+
+        public void CreateTwitterService()
         {
-            Debug.WriteLine("CheckTweetsByDate...");
-            foreach (var tweet in tweets)
+            TwitterClientInfo client = new TwitterClientInfo();
+            client.ConsumerKey = "BBfi7kpS5sR2Ad5FrkrhuVe7y";
+            client.ConsumerSecret = "BX5pLTGiQ4sqQXIHdEaQKL44wxmyes9E8KtyE7j08hmxhW1p0t";
+            Service = new TwitterService(client);
+            Token = Service.GetRequestToken();
+            PinUrl = Service.GetAuthorizationUri(Token);
+        }
+
+        private string verifier;
+        public string Verifier
+        {
+            get
             {
-                if (tweet.Date <= DateTime.Now)
-                {
-                    PostTweet(tweet.Text);
-                }
+                return verifier;
+            }
+            set
+            {
+                verifier = value;
             }
         }
 
-        private void PostTweet(string tweetText)
+        public void PostTweet(string tweetText)
         {
             var result = Service.BeginSendTweet(new SendTweetOptions
             {
@@ -59,8 +49,22 @@ namespace MinimalMVVM.Models
             Service.EndSendTweet(result);
 
             TwitterClientInfo twitterClientInfo = new TwitterClientInfo();
-            //twitterClientInfo.
             TwitterService service = new TwitterService();
+        }
+
+        public bool TryLogin()
+        {
+            try
+            {
+                OAuthAccessToken accessToken =
+           Service.GetAccessToken(Token, Verifier);
+
+                Service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+                System.Windows.MessageBox.Show("yey");
+                return true;
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return false;
         }
     }
 }
