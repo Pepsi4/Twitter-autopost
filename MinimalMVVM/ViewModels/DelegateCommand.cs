@@ -7,7 +7,7 @@ namespace MinimalMVVM.ViewModels
     {
         private Action<object> _action;
         private Action _actionNoParameter;
-
+        
 
         private bool _canExecute;
         public DelegateCommand(Action<object> action, bool canExecute)

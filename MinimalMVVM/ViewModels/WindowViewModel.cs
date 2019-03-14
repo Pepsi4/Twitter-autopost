@@ -14,7 +14,6 @@ namespace MinimalMVVM
 {
     public struct TextField
     {
-
         public string Text { get; set; }
         public DateTime Date { get; set; }
     }
@@ -28,8 +27,6 @@ namespace MinimalMVVM
         {
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
-            this.StartTimerCommand = new DelegateCommand(this.StartTimer, true);
-            this.StopTimerCommand = new DelegateCommand(this.StopTimer, true);
 
             StartTimer();
         }
@@ -44,20 +41,7 @@ namespace MinimalMVVM
         private ObservableCollection<TextField> _history = new ObservableCollection<TextField>();
 
         private DispatcherTimer timer = null;
-
         private int _duration = 1000;
-
-        public ICommand StartTimerCommand
-        {
-            get;
-            set;
-        }
-
-        public ICommand StopTimerCommand
-        {
-            get;
-            set;
-        }
 
         private DateTime _dateTimeCurrent = DateTime.Today;
         public DateTime DateTimeCurrent
@@ -96,17 +80,6 @@ namespace MinimalMVVM
             }
         }
 
-        private string _filePath;
-        public string FilePath
-        {
-            get { return _filePath; }
-            set
-            {
-                _filePath = value;
-                RaisePropertyChangedEvent(nameof(FilePath));
-            }
-        }
-
         private int? _selectedLineIndex;
         public int? SelectedLineIndex
         {
@@ -131,32 +104,17 @@ namespace MinimalMVVM
                 RaisePropertyChangedEvent(nameof(History));
             }
         }
-
-        private static string ConsumerKey = "";
-        private static string ConsumerSecret = "";
-        private static string _accessToken = "";
-        private static string _accessTokenSecret = "";
-
-        private static TwitterService service = new TwitterService(ConsumerKey, ConsumerSecret, _accessToken, _accessTokenSecret);
-
         #endregion
 
         #region commands
-
-        public ICommand OpenUsersListFormCommand
-        {
-            get { return new DelegateCommand(OpenUsersListForm, true); }
-        }
+        
 
         public ICommand ConvertTextCommand
         {
             get { return new DelegateCommand(ConvertText, true); }
         }
 
-        private bool CanExecuteAttachmentChecked()
-        {
-            return true;
-        }
+        private bool CanExecuteAttachmentChecked() => true;
 
         private ICommand _createFileCommand;
 
@@ -168,10 +126,7 @@ namespace MinimalMVVM
             }
         }
 
-        public ICommand DeleteLineFromTextCommand
-        {
-            get { return new DelegateCommand(DeleteLineFromText, true); }
-        }
+        public ICommand DeleteLineFromTextCommand => new DelegateCommand(DeleteLineFromText, true);
 
         ICommand _getFilePath;
         public ICommand GetFilePathCommand
@@ -185,12 +140,7 @@ namespace MinimalMVVM
         #endregion
 
         #region command-methods
-
-        private void OpenUsersListForm()
-        {
-            Views.UsersProfile usersListForm = new Views.UsersProfile();
-            usersListForm.Show();
-        }
+        
 
         private void CreateFile(object obj)
         {
@@ -260,28 +210,6 @@ namespace MinimalMVVM
         #endregion
 
         #region helpers
-        public void StartTimer()
-        {
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(_duration);
-            timer.Tick += new EventHandler(TimerTick);
-            timer.Start();
-        }
-
-        public void StopTimer()
-        {
-            if (timer != null)
-            {
-                timer.Stop();
-                timer = null;
-            }
-        }
-
-        private void TimerTick(object send, EventArgs e)
-        {
-            TimerAction();
-        }
-
         private DateTime GetDateFromString(string str)
         {
             DateTime date = Convert.ToDateTime(str.Split(' ').Last());
@@ -296,70 +224,14 @@ namespace MinimalMVVM
             return str.Substring(0, index);
         }
 
-
-        static List<DateTime> SortAscending(List<DateTime> list)
+        public void StartTimer()
         {
-            list.Sort((x, y) => DateTime.Compare(x, y));
-            return list;
-        }
+            TwitterUserModel twitterUserModel = new TwitterUserModel();
 
-        private string[] SortArrayByDate(DateTime[] dates, List<string> list)
-        {
-            var result = dates.OrderBy(d => d).ToArray();
-            var listResult = new string[list.Count];
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                listResult[i] = list[Array.FindIndex(ConvertDateToString(result), row => row.Contains(list[i])) - 1];
-            }
-
-            return listResult;
-        }
-
-        private string[] ConvertDateToString(DateTime[] date)
-        {
-            string[] str = new string[date.Length];
-            for (int i = 0; i < date.Length; i++)
-            {
-                str[i] = date[i].ToString();
-            }
-
-            return str;
-        }
-
-        //tweetsharp methods are here.
-        private void TimerAction()
-        {
-            //if (DateTimeCurrent.Day < DateTime.Now.Day ||
-            //     ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour < DateTime.Now.Hour))
-            //     || ((DateTimeCurrent.Day == DateTime.Now.Day) && (DateTimeCurrent.Hour == DateTime.Now.Hour && DateTimeCurrent.Minute < DateTime.Now.Minute)))
-            //{
-            //    var service = CreateService();
-            //    if (service != null)
-            //    {
-
-            //    }
-            //    else
-            //    {
-            //        //_windowsController.ShowMessage("Неверно указаны данные пользователя. Попробуйте проверить правильность данных.");
-            //    }
-            //}
-        }
-
-        private TwitterService CreateService()
-        {
-            if (TwitterUserModel.ConsumerKey == null ||
-                TwitterUserModel.ConsumerSecret == null ||
-                TwitterUserModel.AccessToken == null ||
-                TwitterUserModel.AccessTokenSecret == null) { return null; }
-
-
-            TwitterService service = new TwitterService(TwitterUserModel.ConsumerKey,
-                TwitterUserModel.ConsumerSecret,
-                TwitterUserModel.AccessToken,
-                TwitterUserModel.AccessTokenSecret);
-
-            return service;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(_duration);
+            timer.Tick += (sender, e) => twitterUserModel.CheckTweetsByDate(History);
+            timer.Start();
         }
 
         // For tests only. Do not use directly.
@@ -434,21 +306,14 @@ namespace MinimalMVVM
         {
             try
             {
-
                 using (System.IO.StreamWriter file =
             new System.IO.StreamWriter(FileModel.TweetsPath, false))
                 {
-
-
-
-
                     if (FileModel.TweetsPath != null)
                     {
-                        // _windowsController.ShowMessage(_history.Count.ToString());
                         foreach (TextField item in _history)
                         {
                             file.WriteLine(item.Text + " " + item.Date);
-                            //File.WriteAllText(FileModel.TweetsPath, item.Text + " " + item.Date);
                         }
                     }
 
@@ -471,10 +336,9 @@ namespace MinimalMVVM
 
         private void AddToHistory(TextField item)
         {
-            if (!_history.Contains(item)) //item.Text + " " + item.Date
+            if (!_history.Contains(item))
             {
                 _history.Add(item);
-                //History = _history;
             }
         }
 
@@ -485,14 +349,39 @@ namespace MinimalMVVM
                 _history.RemoveAt((int)_selectedLineIndex);
             }
         }
+        #endregion
+    }
 
-        private void DeleteLineFromList(ObservableCollection<string> list)
+
+}
+
+namespace MinimalMVVM.Models
+{
+    public class TwitterTimerModel
+    {
+        private TwitterService service;
+        public TwitterTimerModel(TwitterService service)
         {
-            if (_selectedLineIndex != null && _selectedLineIndex >= 0)
+            this.service = service;
+        }
+
+        public void CheckTweetsByDate(ObservableCollection<TextField> tweets)
+        {
+            foreach (var tweet in tweets)
             {
-                list.RemoveAt((int)_selectedLineIndex);
+                if (tweet.Date <= DateTime.Now)
+                {
+                    PostTweet();
+                }
             }
         }
-        #endregion
+
+        private void PostTweet()
+        {
+            service.BeginSendTweet(new SendTweetOptions
+            {
+                Status = "test"
+            });
+        }
     }
 }

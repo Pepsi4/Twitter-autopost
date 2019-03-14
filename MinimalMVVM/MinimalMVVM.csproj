@@ -98,10 +98,14 @@
     <Compile Include="Interfaces\IWindowsController.cs" />
     <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\TwitterUserModel.cs" />
+    <Compile Include="Models\WindowManagerModel.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\ObservableObject.cs" />
-    <Compile Include="ViewModels\UsersProfileViewModel.cs" />
+    <Compile Include="ViewModels\TwitterBrowserViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
+    <Compile Include="Views\TwitterBrowser.xaml.cs">
+      <DependentUpon>TwitterBrowser.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WindowControl.xaml.cs">
       <DependentUpon>WindowControl.xaml</DependentUpon>
     </Compile>
@@ -113,9 +117,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\XAML Helpers\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Views\UsersProfile.xaml.cs">
-      <DependentUpon>UsersProfile.xaml</DependentUpon>
-    </Compile>
+    <Page Include="Views\TwitterBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\WindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -123,10 +128,6 @@
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\UsersProfile.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -157,9 +158,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Unit Tests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
