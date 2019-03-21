@@ -32,15 +32,15 @@
         <StackPanel Orientation="Horizontal">
             <Label MinWidth="140" Content="Список ваших твитов"/>
             <Label Content="{Binding TweetsPath, UpdateSourceTrigger=PropertyChanged}" MinWidth="200" MaxWidth="200"></Label>
-            <Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="Tweets.txt" Content="Создать"/>
-            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" Width="100" Content="Открыть"/>
+            <!--<Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="Tweets.txt" Content="Создать"/>
+            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" Width="100" Content="Открыть"/>-->
         </StackPanel>
 
         <StackPanel Orientation="Horizontal">
             <Label Content="{Binding WhiteUsersFilePath, UpdateSourceTrigger=PropertyChanged}" MaxWidth="200" MinWidth="200"></Label>
         </StackPanel>
 
-        <Button  Command="{Binding OpenUsersListFormCommand}" Margin="333,0,0,0" Width="200" Content="Настройки пользователя" />
+        <!--<Button  Command="{Binding OpenUsersListFormCommand}" Margin="333,0,0,0" Width="200" Content="Настройки пользователя" />-->
 
 
         <Label Foreground="Blue" Margin="5,40,5,0" Height="27">Текст файла</Label>

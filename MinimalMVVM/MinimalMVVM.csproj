@@ -95,9 +95,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DateController\DateTimePicker.xaml.cs">
-      <DependentUpon>DateTimePicker.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Interfaces\IWindowsController.cs" />
     <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\TimerModel.cs" />
@@ -121,10 +118,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\XAML Helpers\BooleanToVisibilityConverter.cs" />
-    <Page Include="DateController\DateTimePicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\TwitterBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -24,12 +24,15 @@ namespace MinimalMVVM
 
         public WindowViewModel(IWindowsController windowsController)
         {
+
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
             fileModel = new FileModel(windowsController);
             timerModel = new TimerModel();
 
-            
+            CreateFile("Tweets.txt");
+            OpenFile("Tweets.txt");
+
             StartTimer();
             RefreshTimer();
         }
@@ -117,39 +120,36 @@ namespace MinimalMVVM
 
         private bool CanExecuteAttachmentChecked() => true;
 
-        private ICommand _createFileCommand;
+        //private ICommand _createFileCommand;
 
-        public ICommand CreateFileCommand
-        {
-            get
-            {
-                return _createFileCommand ?? (_createFileCommand = new DelegateCommand(param => CreateFile(param), CanExecuteAttachmentChecked()));
-            }
-        }
+        //public ICommand CreateFileCommand
+        //{
+        //    get
+        //    {
+        //        return _createFileCommand ?? (_createFileCommand = new DelegateCommand(param => CreateFile(param), CanExecuteAttachmentChecked()));
+        //    }
+        //}
 
         public ICommand DeleteLineFromTextCommand => new DelegateCommand(DeleteLineFromText, true);
 
-        ICommand _getFilePath;
-        public ICommand GetFilePathCommand
-        {
-            get
-            {
-                return _getFilePath ?? (_getFilePath = new DelegateCommand(param => OpenFile(param, true, null), CanExecuteAttachmentChecked()));
-            }
-        }
+        //ICommand _getFilePath;
+        //public ICommand GetFilePathCommand
+        //{
+        //    get
+        //    {
+        //        return _getFilePath ?? (_getFilePath = new DelegateCommand(param => OpenFile(param, true, null), CanExecuteAttachmentChecked()));
+        //    }
+        //}
 
         #endregion
 
         #region command-methods
 
-        private void CreateFile(object obj)
+        private void CreateFile(string path)
         {
-            string path = obj.ToString();
-
             if (File.Exists(path))
             {
-                _windowsController.ShowMessage("Файл уже существует.");
-                OpenFile(obj, false, path);
+                Debug.WriteLine("Файл уже существует.");
             }
             else
             {
@@ -158,19 +158,14 @@ namespace MinimalMVVM
             }
         }
 
-        private void OpenFile(object buttonName, bool isItNewFile, string filePath)
+        private void OpenFile(string filePath)
         {
-            if (isItNewFile)
-            {
-                filePath = _windowsController.ShowFileDialog();
-            }
-
             ClearHistory();
 
             if (filePath != null && filePath != "")
             {
                 TweetsPath = filePath;
-                GetTextFromFile(buttonName.ToString());
+                GetTextFromFile(filePath);
             }
             else
             {
