@@ -12,24 +12,38 @@ namespace MinimalMVVM
         private int _duration = 15000;
 
         private TwitterUserModel twitterUserModel;
+        FileModel fileModel;
 
         public TimerModel()
         {
-            History = new ObservableCollection<TweetField>();
+            //History = new ObservableCollection<TweetField>();
             twitterUserModel = new TwitterUserModel();
+            fileModel = new FileModel();
         }
 
         public void CheckTweetsByDate()
         {
-            Debug.WriteLine("CheckTweetsByDate...");
-            foreach (var tweet in History)
+            if (TwitterUserModel.IsLoggedIn)
             {
-                Debug.WriteLine(tweet.Text);
-                if (tweet.Date <= DateTime.Now)
+                Debug.WriteLine("CheckTweetsByDate...");
+
+                for (int i = 0; i < HistoryModel.History.Count; i++)
                 {
-                    PostTweet(tweet.Text);
+                    Debug.WriteLine(HistoryModel.History[i].Text);
+                    if (HistoryModel.History[i].Date <= DateTime.Now)
+                    {
+                        PostTweet(HistoryModel.History[i].Text);
+                        HistoryModel historyModel = new HistoryModel();
+                        historyModel.DeleteTweet(HistoryModel.History[i]);
+                        fileModel.SaveChangesInFile(HistoryModel.History);
+                    }
                 }
             }
+            else
+            {
+                Debug.WriteLine("You are not logged in...");
+            }
+
         }
 
         private void PostTweet(string tweetText)
@@ -37,7 +51,7 @@ namespace MinimalMVVM
             twitterUserModel.PostTweet(tweetText);
         }
 
-        public ObservableCollection<TweetField> History;
+        //public ObservableCollection<TweetField> History;
 
         public void CreateTimer()
         {

@@ -29,12 +29,13 @@ namespace MinimalMVVM
             _windowsController = windowsController;
             fileModel = new FileModel(windowsController);
             timerModel = new TimerModel();
+            historyModel = new HistoryModel();
 
             CreateFile("Tweets.txt");
             OpenFile("Tweets.txt");
 
             StartTimer();
-            RefreshTimer();
+            //RefreshTimerModelHistory();
         }
         #endregion
 
@@ -43,8 +44,6 @@ namespace MinimalMVVM
 
         private readonly FileModel fileModel;
         private readonly TwitterUserModel twitterUserModel = new TwitterUserModel();
-
-        private ObservableCollection<TweetField> _history = new ObservableCollection<TweetField>();
 
         private DateTime _dateTimeCurrent = DateTime.Today;
         public DateTime DateTimeCurrent
@@ -83,64 +82,42 @@ namespace MinimalMVVM
             }
         }
 
-        private int? _selectedLineIndex;
+
         public int? SelectedLineIndex
         {
-            get { return _selectedLineIndex; }
+            get { return historyModel.SelectedLineIndex; }
 
             set
             {
-                _selectedLineIndex = value;
+                historyModel.SelectedLineIndex = value;
                 RaisePropertyChangedEvent(nameof(SelectedLineIndex));
             }
         }
 
+        private HistoryModel historyModel;
         public ObservableCollection<TweetField> History
         {
             get
             {
-                return _history;
+                return HistoryModel.History;
             }
             set
             {
-                _history = value;
-                RefreshTimer();
+                HistoryModel.History = value;
                 RaisePropertyChangedEvent(nameof(History));
             }
         }
         #endregion
 
         #region commands
-
-
         public ICommand ConvertTextCommand
         {
             get { return new DelegateCommand(ConvertText, true); }
         }
 
-        private bool CanExecuteAttachmentChecked() => true;
-
-        //private ICommand _createFileCommand;
-
-        //public ICommand CreateFileCommand
-        //{
-        //    get
-        //    {
-        //        return _createFileCommand ?? (_createFileCommand = new DelegateCommand(param => CreateFile(param), CanExecuteAttachmentChecked()));
-        //    }
-        //}
+        //private bool CanExecuteAttachmentChecked() => true;
 
         public ICommand DeleteLineFromTextCommand => new DelegateCommand(DeleteLineFromText, true);
-
-        //ICommand _getFilePath;
-        //public ICommand GetFilePathCommand
-        //{
-        //    get
-        //    {
-        //        return _getFilePath ?? (_getFilePath = new DelegateCommand(param => OpenFile(param, true, null), CanExecuteAttachmentChecked()));
-        //    }
-        //}
-
         #endregion
 
         #region command-methods
@@ -160,7 +137,7 @@ namespace MinimalMVVM
 
         private void OpenFile(string filePath)
         {
-            ClearHistory();
+            historyModel.ClearHistory();
 
             if (filePath != null && filePath != "")
             {
@@ -177,11 +154,13 @@ namespace MinimalMVVM
         {
             if (IsDateBiggerThanToday(DateTimeCurrent) && IsInputNotEmpty())
             {
-                AddToHistory(new TweetField()
+                historyModel.AddToHistory(new TweetField()
                 {
                     Text = SomeText,
                     Date = _dateTimeCurrent
                 });
+
+                //RefreshTimerModelHistory();
 
                 ClearInput();
                 BubbleSort(History);
@@ -191,15 +170,7 @@ namespace MinimalMVVM
 
         private void DeleteLineFromText()
         {
-            try
-            {
-                List<string> linesList = File.ReadAllLines(FileModel.TweetsPath).ToList();
-                linesList.RemoveAt((int)_selectedLineIndex);
-            }
-            catch (System.ArgumentNullException) { }
-            catch (System.ArgumentOutOfRangeException) { }
-
-            DeleteLineHistory();
+            historyModel.DeleteLineHistory();
             SaveChangesInFile();
         }
 
@@ -209,10 +180,10 @@ namespace MinimalMVVM
 
         TimerModel timerModel;
 
-        private void RefreshTimer()
-        {
-            timerModel.History = _history;
-        }
+        //private void RefreshTimerModelHistory()
+        //{
+        //timerModel.History = History;
+        //}
 
         public void StartTimer()
         {
@@ -266,12 +237,6 @@ namespace MinimalMVVM
 
         private void GetTextFromFile(string listName)
         {
-            //History = new ObservableCollection<TweetField>();
-
-            //foreach (var item in fileModel.GetTextFromFile())
-            //{
-            //    History.Add(item);
-            //}
             History = new ObservableCollection<TweetField>(fileModel.GetTextFromFile());
         }
 
@@ -283,30 +248,6 @@ namespace MinimalMVVM
         private void ClearInput()
         {
             SomeText = string.Empty;
-        }
-
-        private void ClearHistory()
-        {
-            _history.Clear();
-        }
-
-        private void AddToHistory(TweetField item)
-        {
-            if (!_history.Contains(item))
-            {
-                _history.Add(item);
-            }
-
-            // the setter method is calling here.
-            History = History;
-        }
-
-        private void DeleteLineHistory()
-        {
-            if (_selectedLineIndex != null && _selectedLineIndex >= 0)
-            {
-                _history.RemoveAt((int)_selectedLineIndex);
-            }
         }
         #endregion
     }

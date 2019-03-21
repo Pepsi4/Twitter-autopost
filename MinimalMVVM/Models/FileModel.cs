@@ -16,6 +16,8 @@ namespace MinimalMVVM
             _windowsController = windowsController;
         }
 
+        public FileModel() { }
+
         public static string TweetsPath { get; set; } = "C://";
 
         public void SaveChangesInFile(ObservableCollection<TweetField> history)

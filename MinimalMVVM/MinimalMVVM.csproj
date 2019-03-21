@@ -97,6 +97,7 @@
     </ApplicationDefinition>
     <Compile Include="Interfaces\IWindowsController.cs" />
     <Compile Include="Models\FileModel.cs" />
+    <Compile Include="Models\HistoryModel.cs" />
     <Compile Include="Models\TimerModel.cs" />
     <Compile Include="Models\TwitterUserModel.cs" />
     <Compile Include="Models\WindowManagerModel.cs" />

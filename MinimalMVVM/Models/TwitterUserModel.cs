@@ -9,6 +9,8 @@ namespace MinimalMVVM
     {
         public Uri PinUrl { get; set; }
 
+        public static bool IsLoggedIn { get; set; }
+
         public OAuthRequestToken Token
         {
             get; set;
@@ -60,7 +62,8 @@ namespace MinimalMVVM
            Service.GetAccessToken(Token, Verifier);
 
                 Service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-                System.Windows.MessageBox.Show("yey");
+                System.Windows.MessageBox.Show("Вы успешно вошли.");
+                IsLoggedIn = true;
                 return true;
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
