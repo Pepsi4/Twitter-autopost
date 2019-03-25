@@ -1,15 +1,44 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using TweetSharp;
 
 namespace MinimalMVVM
 {
-    public class TwitterUserModel : ObservableObject
+    public class TwitterUserModel : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+
+            // With C# 6 this can be replaced with
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public Uri PinUrl { get; set; }
 
-        public static bool IsLoggedIn { get; set; }
+
+        public static event EventHandler IsLoggedInChanged;
+
+        private static bool isLoggedIn;
+        public static bool IsLoggedIn
+        {
+            get { return isLoggedIn; }
+            set
+            {
+                isLoggedIn = value;
+                if (IsLoggedInChanged != null)
+                {
+                    IsLoggedInChanged(null, EventArgs.Empty);
+                }
+            }
+        }
 
         public OAuthRequestToken Token
         {

@@ -10,8 +10,8 @@ namespace MinimalMVVM.Views
             WindowViewModel windowViewModel = new WindowViewModel();
             this.DataContext = windowViewModel;
 
-            TwitterBrowser twitterBrowser = new TwitterBrowser();
-            twitterBrowser.Show();
+            //TwitterBrowserView twitterBrowser = new TwitterBrowserView();
+            //twitterBrowser.Show();
         }
     }
 }

@@ -105,8 +105,8 @@
     <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\TwitterBrowserViewModel.cs" />
     <Compile Include="ViewModels\WindowViewModel.cs" />
-    <Compile Include="Views\TwitterBrowser.xaml.cs">
-      <DependentUpon>TwitterBrowser.xaml</DependentUpon>
+    <Compile Include="Views\TwitterBrowserView.xaml.cs">
+      <DependentUpon>TwitterBrowserView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowControl.xaml.cs">
       <DependentUpon>WindowControl.xaml</DependentUpon>
@@ -119,7 +119,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\XAML Helpers\BooleanToVisibilityConverter.cs" />
-    <Page Include="Views\TwitterBrowser.xaml">
+    <Compile Include="Views\XAML Helpers\InverseBooleanConverter.cs" />
+    <Page Include="Views\TwitterBrowserView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

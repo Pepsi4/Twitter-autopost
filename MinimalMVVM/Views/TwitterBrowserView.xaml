@@ -1,4 +1,4 @@
-﻿<Window x:Class="MinimalMVVM.Views.TwitterBrowser"
+﻿<Window x:Class="MinimalMVVM.Views.TwitterBrowserView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MinimalMVVM"
         
         mc:Ignorable="d"
-        Title="TwitterBrowser" Height="450.667" Width="537" Background="#FFD27373">
+        Title="TwitterBrowserView" Height="450.667" Width="537" Background="#FFD27373">
     <Grid>
         <WebBrowser x:Name="webBrowser_1" local:WebBrowserHelper.Body="{Binding PinUrl}" HorizontalAlignment="Left" Height="333" Margin="10,10,0,0" VerticalAlignment="Top" Width="511"/>
         <TextBox Text="{Binding Verifier, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="37" Margin="72,361,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" FontSize="24"/>

@@ -22,5 +22,11 @@ namespace MinimalMVVM.Views
         {
             System.Windows.MessageBox.Show(msg);
         }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            TwitterBrowserView twitterBrowser = new TwitterBrowserView();
+            twitterBrowser.Show();
+        }
     }
 }

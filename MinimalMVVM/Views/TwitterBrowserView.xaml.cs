@@ -5,9 +5,9 @@ namespace MinimalMVVM.Views
     /// <summary>
     /// Interaction logic for TwitterBrowser.xaml
     /// </summary>
-    public partial class TwitterBrowser : Window
+    public partial class TwitterBrowserView : Window
     {
-        public TwitterBrowser()
+        public TwitterBrowserView()
         {
             InitializeComponent();
             TwitterBrowserViewModel twitterBrowserViewModel = new TwitterBrowserViewModel();

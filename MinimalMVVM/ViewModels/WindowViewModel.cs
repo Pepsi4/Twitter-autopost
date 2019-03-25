@@ -8,6 +8,8 @@ using MinimalMVVM.ViewModels;
 using System.Diagnostics;
 using System;
 using System.Windows.Threading;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MinimalMVVM
 {
@@ -17,19 +19,45 @@ namespace MinimalMVVM
         public DateTime Date { get; set; }
     }
 
-    public class WindowViewModel : ObservableObject
+    public class WindowViewModel : INotifyPropertyChanged
     {
-        #region constructors
-        public WindowViewModel() { }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChangedEvent([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public bool IsLoggedIn
+        {
+            get { return TwitterUserModel.IsLoggedIn; }
+            set
+            {
+                TwitterUserModel.IsLoggedIn = value;
+                Debug.WriteLine("IsLoggedIn " + value);
+                RaisePropertyChangedEvent(nameof(IsLoggedIn));
+            }
+        }
+
+        #region constructors
+        public WindowViewModel()
+        {
+        }
+        public TwitterUserModel twitterUserModel;
         public WindowViewModel(IWindowsController windowsController)
         {
-
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
             fileModel = new FileModel(windowsController);
             timerModel = new TimerModel();
             historyModel = new HistoryModel();
+            twitterUserModel = new TwitterUserModel();
+
+            TwitterUserModel.IsLoggedInChanged += IsLoggedInHandler;
 
             CreateFile("Tweets.txt");
             OpenFile("Tweets.txt");
@@ -37,13 +65,18 @@ namespace MinimalMVVM
             StartTimer();
             //RefreshTimerModelHistory();
         }
+
+        void IsLoggedInHandler(object sender, EventArgs e)
+        {
+            RaisePropertyChangedEvent(nameof(IsLoggedIn));
+        }
         #endregion
 
         #region Properties
         IWindowsController _windowsController;
 
         private readonly FileModel fileModel;
-        private readonly TwitterUserModel twitterUserModel = new TwitterUserModel();
+
 
         private DateTime _dateTimeCurrent = DateTime.Today;
         public DateTime DateTimeCurrent
@@ -116,6 +149,8 @@ namespace MinimalMVVM
         }
 
         //private bool CanExecuteAttachmentChecked() => true;
+
+        //public ICommand OpenTwitterBrowserCommand => new DelegateCommand(OpenTwitterBrowser, true);
 
         public ICommand DeleteLineFromTextCommand => new DelegateCommand(DeleteLineFromText, true);
         #endregion

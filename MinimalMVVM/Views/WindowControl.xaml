@@ -5,8 +5,8 @@
              xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
+             xmlns:local="clr-namespace:MinimalMVVM"
              Height="509.332" Width="567.667">
-
 
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding ConvertTextCommand}"/>
@@ -14,6 +14,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="ReverseBooleanToVisibilityConverter" />
+        <local:InverseBooleanConverter x:Key="ReverseBoolean"></local:InverseBooleanConverter>
     </UserControl.Resources>
 
     <UserControl.Style>
@@ -26,28 +27,20 @@
         </Style>
     </UserControl.Style>
 
-    <StackPanel Margin="10,-13,10,-38" Background="White">
-
-
-        <StackPanel Orientation="Horizontal">
+    <StackPanel Margin="10,0,0,0.333" Background="White">
+        <Grid>
             <Label MinWidth="140" Content="Список ваших твитов"/>
-            <Label Content="{Binding TweetsPath, UpdateSourceTrigger=PropertyChanged}" MinWidth="200" MaxWidth="200"></Label>
-            <!--<Button HorizontalAlignment="Right" Width="100" Command="{Binding CreateFileCommand}" CommandParameter="Tweets.txt" Content="Создать"/>
-            <Button HorizontalAlignment="Right" Command="{Binding GetFilePathCommand}" Width="100" Content="Открыть"/>-->
-        </StackPanel>
+            <Label Content="Вы не залогинены." Background="#FFE0AEAE" Margin="344,0,75,0"/>
+            <Label Visibility="{Binding Path=IsLoggedIn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ReverseBooleanToVisibilityConverter}}" Content="Вы залогинены." Height="32" Background="#FFB8FFBF" Margin="344,0,75,0"/>
+            <Button IsEnabled="{Binding Path=IsLoggedIn, Converter={StaticResource ResourceKey=ReverseBoolean}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Content="Войти" Width="75" Margin="483,0,0,0" Click="Button_Click"/>
+        </Grid>
 
         <StackPanel Orientation="Horizontal">
             <Label Content="{Binding WhiteUsersFilePath, UpdateSourceTrigger=PropertyChanged}" MaxWidth="200" MinWidth="200"></Label>
         </StackPanel>
 
-        <!--<Button  Command="{Binding OpenUsersListFormCommand}" Margin="333,0,0,0" Width="200" Content="Настройки пользователя" />-->
-
-
         <Label Foreground="Blue" Margin="5,40,5,0" Height="27">Текст файла</Label>
-        <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
-            
-        </StackPanel>
-        
+
         <ListBox SelectedIndex="{Binding SelectedLineIndex}" ItemsSource="{Binding History, NotifyOnSourceUpdated=True}" Height="200" Margin="5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -57,27 +50,13 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            
-            
         </ListBox>
-
-        <StackPanel Orientation="Horizontal"/>
-
-  
-
-
-
-        <GroupBox Visibility="{Binding ElementName=http_radio, Path=IsChecked, Converter={StaticResource ReverseBooleanToVisibilityConverter}}">
-            <StackPanel>
-                <!--<TextBox Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}" Margin="5,5,5.333,5" Height="24"/>-->
-            </StackPanel>
-        </GroupBox>
 
         <StackPanel Orientation="Horizontal">
             <Label Foreground="Blue" Width="150" Content="Текст твита"/>
             <TextBox Width="300" Height="48" Text="{Binding SomeText, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
-        
+
         <StackPanel Orientation="Horizontal">
             <Label Width="150" Foreground="Blue" Content="Время поста твита"/>
             <wpfTool:DateTimePicker x:Name="dtpStartTime"  
@@ -86,13 +65,10 @@
                      FormatString="HH:mm tt" 
                      Margin="5"/>
         </StackPanel>
-        
+
         <StackPanel Orientation="Horizontal">
             <Button MinWidth="200" Command="{Binding ConvertTextCommand}" CommandParameter="1"  Content="Добавить твит"/>
             <Button MinWidth="200" Command="{Binding DeleteLineFromTextCommand}" Content="Удалить твит"/>
         </StackPanel>
-
-
-        <!--<Button Command="{Binding AddTextFromFileCommand}" Content="Выбрать файл" ></Button>-->
     </StackPanel>
 </UserControl>
