@@ -9,8 +9,6 @@ namespace MinimalMVVM
 {
     class HistoryModel
     {
-       
-
         private static ObservableCollection<TweetField> _history = new ObservableCollection<TweetField>();
 
         public static ObservableCollection<TweetField> History

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Threading;
-using TweetSharp;
 
 namespace MinimalMVVM
 {
@@ -16,7 +14,6 @@ namespace MinimalMVVM
 
         public TimerModel()
         {
-            //History = new ObservableCollection<TweetField>();
             twitterUserModel = new TwitterUserModel();
             fileModel = new FileModel();
         }
@@ -36,6 +33,8 @@ namespace MinimalMVVM
                         HistoryModel historyModel = new HistoryModel();
                         historyModel.DeleteTweet(HistoryModel.History[i]);
                         fileModel.SaveChangesInFile(HistoryModel.History);
+
+                        break;
                     }
                 }
             }
@@ -43,15 +42,12 @@ namespace MinimalMVVM
             {
                 Debug.WriteLine("You are not logged in...");
             }
-
         }
 
         private void PostTweet(string tweetText)
         {
             twitterUserModel.PostTweet(tweetText);
         }
-
-        //public ObservableCollection<TweetField> History;
 
         public void CreateTimer()
         {

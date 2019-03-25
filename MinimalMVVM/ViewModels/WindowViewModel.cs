@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.IO;
-using System.Linq;
-using TweetSharp;
 using MinimalMVVM.ViewModels;
 using System.Diagnostics;
 using System;
-using System.Windows.Threading;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -21,9 +17,7 @@ namespace MinimalMVVM
 
     public class WindowViewModel : INotifyPropertyChanged
     {
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         private void RaisePropertyChangedEvent([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanged != null)
@@ -31,31 +25,16 @@ namespace MinimalMVVM
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        public bool IsLoggedIn
-        {
-            get { return TwitterUserModel.IsLoggedIn; }
-            set
-            {
-                TwitterUserModel.IsLoggedIn = value;
-                Debug.WriteLine("IsLoggedIn " + value);
-                RaisePropertyChangedEvent(nameof(IsLoggedIn));
-            }
-        }
-
         #region constructors
-        public WindowViewModel()
-        {
-        }
-        public TwitterUserModel twitterUserModel;
+        public WindowViewModel() { }
         public WindowViewModel(IWindowsController windowsController)
         {
             if (windowsController == null) throw new System.ArgumentNullException(nameof(windowsController));
             _windowsController = windowsController;
-            fileModel = new FileModel(windowsController);
-            timerModel = new TimerModel();
-            historyModel = new HistoryModel();
-            twitterUserModel = new TwitterUserModel();
+            _fileModel = new FileModel(windowsController);
+            _timerModel = new TimerModel();
+            _historyModel = new HistoryModel();
+            _twitterUserModel = new TwitterUserModel();
 
             TwitterUserModel.IsLoggedInChanged += IsLoggedInHandler;
 
@@ -72,13 +51,17 @@ namespace MinimalMVVM
         }
         #endregion
 
-        #region Properties
-        IWindowsController _windowsController;
-
-        private readonly FileModel fileModel;
-
-
+        #region fields
+        private TimerModel _timerModel;
+        private IWindowsController _windowsController;
+        private readonly FileModel _fileModel;
         private DateTime _dateTimeCurrent = DateTime.Today;
+        private string _someText;
+        private HistoryModel _historyModel;
+        private TwitterUserModel _twitterUserModel;
+        #endregion
+
+        #region Properties
         public DateTime DateTimeCurrent
         {
             get
@@ -87,8 +70,6 @@ namespace MinimalMVVM
             }
             set { _dateTimeCurrent = value; }
         }
-
-        private string _someText;
         public string SomeText
         {
             get
@@ -101,33 +82,16 @@ namespace MinimalMVVM
                 RaisePropertyChangedEvent(nameof(SomeText));
             }
         }
-
-        public string TweetsPath
-        {
-            get
-            {
-                return FileModel.TweetsPath;
-            }
-            set
-            {
-                FileModel.TweetsPath = value;
-                RaisePropertyChangedEvent(nameof(TweetsPath));
-            }
-        }
-
-
         public int? SelectedLineIndex
         {
-            get { return historyModel.SelectedLineIndex; }
+            get { return _historyModel.SelectedLineIndex; }
 
             set
             {
-                historyModel.SelectedLineIndex = value;
+                _historyModel.SelectedLineIndex = value;
                 RaisePropertyChangedEvent(nameof(SelectedLineIndex));
             }
         }
-
-        private HistoryModel historyModel;
         public ObservableCollection<TweetField> History
         {
             get
@@ -140,62 +104,33 @@ namespace MinimalMVVM
                 RaisePropertyChangedEvent(nameof(History));
             }
         }
+        public bool IsLoggedIn
+        {
+            get { return TwitterUserModel.IsLoggedIn; }
+            set
+            {
+                TwitterUserModel.IsLoggedIn = value;
+                Debug.WriteLine("IsLoggedIn " + value);
+                RaisePropertyChangedEvent(nameof(IsLoggedIn));
+            }
+        }
         #endregion
 
         #region commands
-        public ICommand ConvertTextCommand
-        {
-            get { return new DelegateCommand(ConvertText, true); }
-        }
-
-        //private bool CanExecuteAttachmentChecked() => true;
-
-        //public ICommand OpenTwitterBrowserCommand => new DelegateCommand(OpenTwitterBrowser, true);
-
+        public ICommand ConvertTextCommand => new DelegateCommand(ConvertText, true);
         public ICommand DeleteLineFromTextCommand => new DelegateCommand(DeleteLineFromText, true);
         #endregion
 
         #region command-methods
-
-        private void CreateFile(string path)
-        {
-            if (File.Exists(path))
-            {
-                Debug.WriteLine("Файл уже существует.");
-            }
-            else
-            {
-                FileStream file = File.Create(path);
-                _windowsController.ShowMessage("Файл создан.");
-            }
-        }
-
-        private void OpenFile(string filePath)
-        {
-            historyModel.ClearHistory();
-
-            if (filePath != null && filePath != "")
-            {
-                TweetsPath = filePath;
-                GetTextFromFile(filePath);
-            }
-            else
-            {
-                _windowsController.ShowMessage("Ошибка файла");
-            }
-        }
-
         private void ConvertText()
         {
             if (IsDateBiggerThanToday(DateTimeCurrent) && IsInputNotEmpty())
             {
-                historyModel.AddToHistory(new TweetField()
+                _historyModel.AddToHistory(new TweetField()
                 {
                     Text = SomeText,
                     Date = _dateTimeCurrent
                 });
-
-                //RefreshTimerModelHistory();
 
                 ClearInput();
                 BubbleSort(History);
@@ -205,7 +140,7 @@ namespace MinimalMVVM
 
         private void DeleteLineFromText()
         {
-            historyModel.DeleteLineHistory();
+            _historyModel.DeleteLineHistory();
             SaveChangesInFile();
         }
 
@@ -213,17 +148,10 @@ namespace MinimalMVVM
 
         #region helpers
 
-        TimerModel timerModel;
-
-        //private void RefreshTimerModelHistory()
-        //{
-        //timerModel.History = History;
-        //}
-
-        public void StartTimer()
+        private void StartTimer()
         {
-            timerModel = new TimerModel();
-            timerModel.CreateTimer();
+            _timerModel = new TimerModel();
+            _timerModel.CreateTimer();
         }
 
         // For tests only. Do not use directly.
@@ -272,17 +200,45 @@ namespace MinimalMVVM
 
         private void GetTextFromFile(string listName)
         {
-            History = new ObservableCollection<TweetField>(fileModel.GetTextFromFile());
+            History = new ObservableCollection<TweetField>(_fileModel.GetTextFromFile());
         }
 
-        public void SaveChangesInFile()
+        private void SaveChangesInFile()
         {
-            fileModel.SaveChangesInFile(History);
+            _fileModel.SaveChangesInFile(History);
         }
 
         private void ClearInput()
         {
             SomeText = string.Empty;
+        }
+
+        private void CreateFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                Debug.WriteLine("Файл уже существует.");
+            }
+            else
+            {
+                FileStream file = File.Create(path);
+                _windowsController.ShowMessage("Файл создан.");
+            }
+        }
+
+        private void OpenFile(string filePath)
+        {
+            _historyModel.ClearHistory();
+
+            if (filePath != null && filePath != "")
+            {
+                FileModel.TweetsPath = filePath;
+                GetTextFromFile(filePath);
+            }
+            else
+            {
+                _windowsController.ShowMessage("Ошибка файла");
+            }
         }
         #endregion
     }

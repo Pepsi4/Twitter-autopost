@@ -2,16 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Views="clr-namespace:MinimalMVVM.Views"
-        xmlns:ViewModels="clr-namespace:MinimalMVVM.ViewModels"
         Title="Converter"
         MinWidth="300"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight" Height="444.999" Width="659">
 
-    <!--<Window.DataContext>
-        <ViewModels:WindowViewModel/>
-    </Window.DataContext>-->
-
     <Views:WindowControl Margin="0,23,5,-16.667"/>
-
 </Window>
