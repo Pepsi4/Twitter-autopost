@@ -7,3 +7,6 @@ Pattern: MVVM
 Technology: WPF
 
 Language: C#
+
+
+.NET framework version: 4.6.1
