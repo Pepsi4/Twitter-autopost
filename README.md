@@ -1,5 +1,5 @@
 # MVVM-Twitter
-App allows you to ban and unban lists of users in twitter. 
+App allows you to post your twitt in selected time. 
 
 
 Pattern: MVVM 
